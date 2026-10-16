@@ -8,26 +8,140 @@
 <style>
 :root{color-scheme:dark;--ink:#e9e5d5;--muted:#aeb6ad;--gold:#e9bf79;--sage:#94bba2;--red:#e49f87;--panel:#22292a;--line:#455052;--button:#354546}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#151b1c;color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button{font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}h1,h2,h3,p{margin:0}header{background:linear-gradient(115deg,#293031,#182021);border-bottom:1px solid #3a4445;padding:20px max(14px,calc((100vw - 1120px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:clamp(20px,3.3vw,31px);letter-spacing:.02em;line-height:1.1}header h1 span{color:var(--gold)}header p{font-size:12px;letter-spacing:.16em;color:#b7b5a3;text-transform:uppercase;margin-bottom:5px}.top-actions{display:flex;gap:8px;flex-wrap:wrap}main{max-width:1120px;margin:auto;padding:18px 14px 40px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(285px,.88fr);gap:18px;align-items:start}.stack{display:grid;gap:14px}.panel{background:var(--panel);border:1px solid #3e4a4a;border-radius:12px;padding:15px;box-shadow:0 9px 28px #0b10121e}.eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--gold);margin-bottom:8px}.panel h2{font-size:20px;margin-bottom:8px}.panel p{margin-bottom:8px;color:#d0d6cb}.muted{color:var(--muted)!important}.small{font-size:12px}.highlight{color:var(--gold);font-weight:700}.success{color:#b7e6b5}.danger{color:#ffc4b1}.ruleline{height:1px;background:#425052;margin:13px 0}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{background:var(--button);border:1px solid #657271;color:var(--ink);border-radius:8px;min-height:43px;padding:10px 13px;font-weight:700;line-height:1.2}.btn.primary{background:#c19c62;color:#141d1d;border-color:#e5bb74}.btn.danger{background:#573c38;border-color:#95675d}.btn:disabled{opacity:.42;cursor:not-allowed}.btn:hover:not(:disabled){filter:brightness(1.13)}.btn.tiny{padding:7px 9px;min-height:37px;font-size:12px}.pill{display:inline-flex;align-items:center;padding:3px 8px;border:1px solid #6c7e78;border-radius:999px;font-size:11px;color:#d9e0d5;white-space:nowrap}.pill.gold{border-color:#b99865;color:#f8d495}.statrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.narrative{background:#182121;border-left:3px solid var(--gold);padding:12px;margin:11px 0;border-radius:4px;font-size:14px}.narrative strong{color:#ffdfa7}.hint{background:#2a3433;border:1px solid #53665a;border-radius:9px;padding:10px;font-size:13px;color:#d2dacb;margin:10px 0}.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:10px 0}.person{border:1px solid #536061;border-radius:9px;background:#2d3838;color:#ebead9;text-align:left;padding:10px;min-height:75px;display:flex;gap:10px;align-items:center}.person.sel{border-color:var(--gold);background:#484132}.person.placed{border-color:#7cb59c;background:#2e423d}.person .glyph{font-size:27px;line-height:1;min-width:25px;text-align:center}.person .detail{flex:1}.person b,.person small{display:block}.person small{color:#bfcbc2}.person[disabled]{opacity:.44}.strip{margin:0;padding-left:20px;color:#cad6cf}.strip li{margin:5px 0}.board-shell{position:relative;max-width:580px;margin:0 auto}.board{width:100%;aspect-ratio:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));border:3px solid #879086;border-radius:6px;overflow:hidden;background:#4f605d;box-shadow:0 6px 20px #0008}.square{appearance:none;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;position:relative;min-width:0;min-height:0;padding:0;color:#f9f3db;user-select:none}.square.light{background:#66766c}.square.dark{background:#43534c}.square:after{content:"";position:absolute;inset:9%;opacity:.16;pointer-events:none;background-image:linear-gradient(100deg,transparent 47%,#d7d5bb 50%,transparent 53%);transform:rotate(12deg)}.square.ruined{background-image:radial-gradient(circle at 68% 27%,#c2a37b26 0 8%,transparent 9%),linear-gradient(35deg,transparent 40%,#1a282629 41% 43%,transparent 44%)}.square.validhome{box-shadow:inset 0 0 0 2px #e2c17e69}.square.focused{box-shadow:inset 0 0 0 4px #e6c27c;z-index:2}.square.legal::before{content:"";position:absolute;width:26%;aspect-ratio:1;border-radius:50%;background:#f4d493b4;z-index:1;box-shadow:0 0 0 3px #293a3666}.square.capture::before{width:76%;aspect-ratio:1;border:4px solid #f3bc82;background:transparent;box-shadow:none}.square.lastmove{box-shadow:inset 0 0 0 4px #a5d39f77}.square.check{box-shadow:inset 0 0 0 5px #f0806f;animation:alertpulse 1.5s ease-in-out infinite}@keyframes alertpulse{50%{box-shadow:inset 0 0 0 7px #f0806fb5}}.coords{position:absolute;bottom:2px;left:4px;font-size:clamp(8px,1.5vw,10px);color:#f4ead0bb;z-index:1;pointer-events:none}.sprite{z-index:3;position:relative;display:grid;place-items:center;width:81%;height:84%;max-width:58px;max-height:58px;border-radius:40% 40% 20% 20%;border:2px solid #d4d0b5;background:linear-gradient(#b6c1a6,#536b64);box-shadow:0 3px 5px #131e19a0, inset 0 -9px 0 #0002;color:#152221}.sprite.enemy{border-color:#e6b1a0;background:linear-gradient(#ad8278,#714645);color:#fff1d3}.sprite .head{font-size:clamp(17px,3.5vw,30px);line-height:1;transform:translateY(-3px)}.sprite .role{position:absolute;bottom:-5px;right:-4px;background:#f1e3ba;color:#27302d;min-width:21px;height:21px;border-radius:6px;border:1px solid #283b35;display:grid;place-items:center;font-size:16px}.sprite.enemy .role{background:#e9b2a4;color:#3a2622}.sprite.king{outline:2px solid #ead19a;outline-offset:1px}.board-note{font-size:12px;color:#acbbb2;margin-top:9px;text-align:center}.log{max-height:175px;overflow:auto;font-size:12px;line-height:1.5;color:#c9d3c9}.log p{border-bottom:1px solid #384646;margin-bottom:5px;padding-bottom:5px}.log time{color:#c5a979;margin-right:8px}.offerline{display:flex;align-items:center;justify-content:space-between;gap:9px;border-bottom:1px solid #465252;padding:8px 0}.offerline:last-child{border:0}.offerline b{display:block}.offerline small{color:#c4cec3}.statusline{color:#e9d5aa;font-size:13px;min-height:20px;margin:8px 0}#announce{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}.modal{position:fixed;inset:0;background:#080c0ddc;display:grid;place-items:center;z-index:50;padding:20px}.modal[hidden]{display:none}.modal-card{max-width:420px;width:100%;border:1px solid #bba378;border-radius:12px;padding:23px;background:#263131}.modal-card h2{margin:0 0 12px}.modal-card .btn{min-width:80px}.footertext{font-size:12px;color:#85988e;text-align:center;margin:8px auto}@media(max-width:780px){main{grid-template-columns:1fr;gap:12px;padding:10px 9px 26px}header{padding:13px 12px}.panel{padding:12px}.board-shell{max-width:min(96vw,500px)}.people{grid-template-columns:repeat(2,minmax(0,1fr))}.person{min-height:68px;padding:7px}.person .glyph{font-size:23px}.top-actions{width:100%}.top-actions .btn{flex:1;font-size:12px}}@media(max-width:380px){.people{grid-template-columns:1fr 1fr;gap:5px}.person{gap:5px;font-size:12px}.person small{font-size:10px}.sprite{border-width:1px}.sprite .role{font-size:13px;min-width:17px;height:17px}.coords{font-size:8px}}@media(prefers-reduced-motion:reduce){.square.check{animation:none}} 
+
+/* Chatrajnorak v0.2 — gameplay viewport is fixed; longer records live behind Details. */
+html,body{height:100%;overflow:hidden}
+body{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+header{flex:0 0 auto;padding-top:10px;padding-bottom:10px}
+main{flex:1 1 0;min-height:0;overflow:hidden;padding-top:9px;padding-bottom:9px}
+.footertext{display:none}
+#boardPanel{min-height:0;display:flex;flex-direction:column;justify-content:center}
+#boardPanel .board-shell{width:min(100%,calc(100dvh - 170px));flex:0 1 auto}
+#boardPanel .board-note{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 0 auto}
+#controlsPanel{min-height:0;overflow:hidden}
+#controls{display:flex;flex-direction:column;height:100%;min-height:0;gap:6px}
+#controls > .cmd-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex:0 0 auto}
+#controls .cmd-head h2{margin:0;font-size:clamp(15px,2vw,19px)}
+#controls .cmd-hint{font-size:12px;color:var(--muted);margin:0;flex:0 0 auto}
+#controls .people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:5px;min-height:0;flex:1 1 auto;margin:0}
+#controls .person{min-height:0;height:100%;padding:5px 7px;gap:5px;overflow:hidden}
+#controls .person .glyph{font-size:23px}
+#controls .person small{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#controls .person b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#controls .pager{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto}
+#controls .pager span{font-size:11px;color:var(--muted)}
+#controls .pager button{min-height:30px;padding:4px 9px}
+#controls .actionrow{display:flex;align-items:center;gap:6px;flex:0 0 auto;flex-wrap:nowrap}
+#controls .actionrow .btn{min-height:38px;padding:6px 8px;flex:1;white-space:normal}
+#controls .offerline{padding:3px 0;min-height:0;flex:1 1 auto}
+#controls .offerline small{font-size:10px}
+#controls .offerline b{font-size:12px}
+#controls .offerline .btn{padding:4px 7px;min-height:34px;font-size:11px}
+#controls .cmd-narrative{font-size:12px;color:var(--muted);margin:0;flex:1;overflow:hidden}
+#controls .offer-container{display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
+#detailsBtn{display:block}
+.details-card{max-width:min(680px,100%);max-height:min(90dvh,750px);overflow-y:auto;overscroll-behavior:contain}
+.details-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.details-head h2{margin:0}
+.details-section{margin-bottom:15px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.details-section h3{font-size:14px;color:var(--gold);margin-bottom:6px}
+.details-section .log{max-height:none}
+@media(min-width:781px){
+  main{grid-template-columns:minmax(0,1.12fr) minmax(280px,.88fr);max-width:1200px;width:100%}
+  main>.stack{display:flex;flex-direction:column;min-height:0}
+  main>.stack>#story{display:none}
+  main>aside.stack{display:flex;flex-direction:column;min-height:0}
+  main>aside.stack>#controlsPanel{flex:1 1 auto;overflow:hidden}
+  main>aside.stack>.panel:not(#controlsPanel){flex:0 0 auto;max-height:18vh;overflow:auto}
+  #boardPanel{flex:1 1 auto}
+  #boardPanel .board-shell{width:min(100%,calc(100dvh - 160px))}
+  #controls .people{grid-template-rows:repeat(2,minmax(45px,1fr))}
+}
+@media(max-width:780px){
+  :root{--mobile-controls-h:clamp(210px,33dvh,270px)}
+  body[data-phase="battle"],body[data-phase="campaign"],body[data-phase="dialogue"],body[data-phase="dialogue_reply"],body[data-phase="retry"],body[data-phase="draw"]{--mobile-controls-h:clamp(128px,20dvh,165px)}
+  header{height:46px;min-height:46px;max-height:46px;padding:4px 9px;flex-wrap:nowrap}
+  header h1{font-size:17px;white-space:nowrap}
+  header p{display:none}
+  header .top-actions{width:auto;flex-wrap:nowrap}
+  header .top-actions #exportBtn,header .top-actions #resetBtn{display:none}
+  #detailsBtn{display:block;font-size:12px;min-height:32px;padding:4px 10px}
+  main{display:flex;flex-direction:column;gap:5px;max-width:none;width:100%;padding:5px 5px max(5px,env(safe-area-inset-bottom));}
+  main>.stack,main>aside.stack{display:contents}
+  #story,main>aside.stack>.panel:not(#controlsPanel){display:none}
+  #boardPanel{order:1;flex:1 1 auto;padding:4px;overflow:hidden}
+  #boardPanel .board-shell{width:min(calc(100vw - 16px),calc(100dvh - 46px - var(--mobile-controls-h) - 34px));min-width:0}
+  #boardPanel .board-note{font-size:10px;line-height:1.2;margin:5px 0 0}
+  #controlsPanel{order:2;flex:0 0 var(--mobile-controls-h);height:var(--mobile-controls-h);padding:7px 9px}
+  #controls{gap:5px}
+  #controls .cmd-head h2{font-size:14px}
+  #controls .cmd-hint{font-size:11px;line-height:1.1}
+  #controls .people{margin:0;gap:4px}
+  #controls .person{padding:3px 5px;min-height:0}
+  #controls .person .glyph{font-size:19px;min-width:21px}
+  #controls .person small{font-size:10px}
+  #controls .person b{font-size:12px}
+  #controls .actionrow .btn{min-height:36px;font-size:12px}
+  #controls .pager button{font-size:11px;min-height:27px}
+  .details-card{padding:13px;max-height:86dvh}
+}
+@media(max-width:780px) and (orientation:landscape) and (max-height:600px){
+  :root{--mobile-controls-h:auto}
+  header{height:39px;min-height:39px;max-height:39px}
+  main{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.95fr);grid-template-rows:minmax(0,1fr);gap:5px}
+  #boardPanel{grid-column:1;grid-row:1;min-height:0}
+  #boardPanel .board-shell{width:min(calc(100dvh - 70px),100%)}
+  #controlsPanel{grid-column:2;grid-row:1;flex:auto;height:auto;min-height:0}
+  #controls .cmd-hint{display:none}
+  #controls .person .glyph{font-size:18px}
+}
+@media(min-width:781px) and (max-height:580px){
+  header{padding:5px 12px}
+  main>aside.stack{grid-template-rows:minmax(0,1fr)}
+  main>aside.stack>.panel:not(#controlsPanel){display:none}
+  main>.stack>#story{display:none}
+  main>.stack{grid-template-rows:minmax(0,1fr)}
+  #boardPanel .board-shell{width:min(100%,calc(100dvh - 95px))}
+}
+
+@media (orientation:landscape) and (max-height:600px) and (min-width:781px){
+  header{height:39px;min-height:39px;max-height:39px;padding:4px 9px;flex-wrap:nowrap}
+  header p{display:none}
+  header h1{font-size:17px}
+  header .top-actions{width:auto;flex-wrap:nowrap}
+  header .top-actions #exportBtn,header .top-actions #resetBtn{display:none}
+  #detailsBtn{display:block;min-height:30px;padding:3px 9px}
+  main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,.95fr);grid-template-rows:minmax(0,1fr);max-width:none;padding:5px;gap:5px}
+  main>.stack,main>aside.stack{display:contents}
+  #story,main>aside.stack>.panel:not(#controlsPanel){display:none}
+  #boardPanel{grid-column:1;grid-row:1;min-height:0;padding:4px}
+  #boardPanel .board-shell{width:min(calc(100dvh - 70px),100%)}
+  #controlsPanel{grid-column:2;grid-row:1;min-height:0;padding:7px 9px}
+  #controls .cmd-hint{display:none}
+  #controls .person{min-height:0}
+  #controls .people{grid-template-rows:repeat(2,minmax(0,1fr))}
+}
 </style>
 </head>
 <body>
 <header>
   <div><p>AGDG · A game inside the game · Experimental build 0.1</p><h1>THE <span>RAIDER</span> SKIRMISH</h1></div>
-  <div class="top-actions"><button class="btn tiny" id="exportBtn">Export event history</button><button class="btn tiny" id="resetBtn">New campaign</button></div>
+  <div class="top-actions"><button class="btn tiny" id="detailsBtn" type="button" aria-haspopup="dialog">Details</button><button class="btn tiny" id="exportBtn">Export event history</button><button class="btn tiny" id="resetBtn">New campaign</button></div>
 </header>
 <main>
   <section class="stack">
     <div class="panel" id="story"></div>
-    <div class="panel"><div class="board-shell"><div class="board" id="board" role="group" aria-label="Chess battlefield, eight rows and eight columns"></div></div><p class="board-note" id="boardHelp">Choose your survivors to begin.</p><div id="announce" aria-live="polite"></div></div>
+    <div class="panel" id="boardPanel"><div class="board-shell"><div class="board" id="board" role="group" aria-label="Chess battlefield, eight rows and eight columns"></div></div><p class="board-note" id="boardHelp">Choose your survivors to begin.</p><div id="announce" aria-live="polite"></div></div>
   </section>
   <aside class="stack">
-    <div class="panel" id="controls"></div>
+    <div class="panel" id="controlsPanel"><div id="controls"></div></div>
     <div class="panel"><div class="eyebrow">Campaign state</div><div id="stats"></div></div>
     <div class="panel"><div class="eyebrow">Survivor records</div><div id="roster"></div></div>
     <div class="panel"><div class="eyebrow">What the world remembers</div><div id="events" class="log" aria-live="polite"></div></div>
   </aside>
 </main>
 <div id="promotion" class="modal" hidden><div class="modal-card"><h2>Choose promotion</h2><p>A survivor reached the far side. Their new role and identity persist after victory.</p><div class="btnrow" id="promotionButtons"></div></div></div>
+<div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle" hidden><div class="modal-card details-card"><div class="details-head"><h2 id="detailsTitle">Campaign details</h2><button class="btn tiny" id="detailsClose" type="button">Close</button></div><div id="detailsBody"></div><div class="btnrow"><button class="btn tiny" id="detailsExport" type="button">Export history</button><button class="btn tiny danger" id="detailsReset" type="button">New campaign</button></div></div></div>
 <p class="footertext">Fully offline · Tap or click to select, tap or click to move · Local autosave · Experimental rules and story</p>
 <script>
 'use strict';
@@ -240,20 +354,50 @@ function renderStory(){let h='';
  }
  doc('story').innerHTML=h;
 }
+let selectionPage=0,previousPhase=null;
+const PAGE_SIZE=4;
+function listPage(items,makeButton){
+  const total=Math.max(1,Math.ceil(items.length/PAGE_SIZE));
+  selectionPage=Math.max(0,Math.min(total-1,selectionPage));
+  const shown=items.slice(selectionPage*PAGE_SIZE,(selectionPage+1)*PAGE_SIZE);
+  return `<div class="people">${shown.map(makeButton).join('')}</div><div class="pager"><button class="btn tiny" type="button" data-page="-1" ${selectionPage===0?'disabled':''}>◀ Previous</button><span>${selectionPage+1} / ${total}</span><button class="btn tiny" type="button" data-page="1" ${selectionPage===total-1?'disabled':''}>Next ▶</button></div>`;
+}
+function actionButtons(...buttons){return `<div class="actionrow">${buttons.join('')}</div>`;}
+function cmdTitle(title,hint=''){return `<div class="cmd-head"><h2>${title}</h2></div>${hint?`<p class="cmd-hint">${hint}</p>`:''}`;}
 function controlsHTML(){switch(game.phase){
- case 'choose':return `<div class="eyebrow">Select companions</div><h2>${selectedStart.length}/5 chosen</h2><div class="people">${initialPool.map(u=>`<button class="person ${selectedStart.includes(u.id)?'sel':''}" data-start="${u.id}" aria-pressed="${selectedStart.includes(u.id)}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail">${playerText(u)}</span></button>`).join('')}</div><button class="btn primary" id="begin" ${selectedStart.length?'':'disabled'}>Start campaign →</button>`;
- case 'campaign':return `<div class="eyebrow">Next choice</div><h2>Crossroads</h2><p>Current party: ${game.roster.length} companion${game.roster.length===1?'':'s'}.</p><button class="btn primary" id="goRaid" ${game.roster.length?'':'disabled'}>Approach the raiders →</button>${!game.roster.length?`<p class="danger">No companions remain. Start a new campaign.</p>`:''}<div class="ruleline"></div><p class="muted small">First playable experiment: one repeatable authored skirmish. Later scenarios and settlement systems remain design goals.</p>`;
- case 'dialogue':return `<div class="eyebrow">Dialogue</div><h2>How do you address them?</h2><div class="btnrow"><button class="btn primary" data-talk="peace">Offer food and peaceful passage</button><button class="btn" data-talk="costume">Compliment their costumes</button></div>`;
- case 'dialogue_reply':return `<div class="eyebrow">Tactics</div><h2>The conversation failed.</h2><button class="btn primary" id="toDeploy">Prepare the party →</button>`;
- case 'deploy':return `<div class="eyebrow">Your available companions</div><h2>Choose a person, then a square</h2><div class="people">${game.roster.map(u=>`<button class="person ${selectedUnit===u.id?'sel':''} ${deploy[u.id]?'placed':''}" data-deploy="${u.id}" aria-pressed="${selectedUnit===u.id}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name} ${deploy[u.id]?'· '+sq(deploy[u.id].r,deploy[u.id].c):''}</b><small>${TYPES[u.type]} · ${u.xp} XP</small></span></button>`).join('')}</div><div class="btnrow"><button class="btn" id="autoDeploy">Auto-arrange</button><button class="btn primary" id="toReveal" ${Object.keys(deploy).length?'':'disabled'}>Reveal battlefield →</button></div><p class="muted small">${Object.keys(deploy).length} deployed · max 15 plus King. Tap an occupied square to return that companion to the bench.</p>`;
- case 'reveal':return `<div class="eyebrow">Ante · risk and reward</div><h2>${game.anteId?'Wager locked':'Place one companion at risk'}</h2><p class="small">A veteran ante increases the chance of valuable recruitment offers after victory. Wagered companions may remain at camp.</p><div class="people">${game.roster.map(u=>`<button class="person ${game.anteId===u.id?'sel':''}" data-ante="${u.id}" ${game.anteId?'disabled':''}><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${game.anteId===u.id?' · wagered':''}</b><small>${TYPES[u.type]} · ${u.xp} XP</small></span></button>`).join('')}</div><p class="small muted">Ante veteran bonus: ${Math.round(Math.min(.82,.20+(game.anteId?game.anteXP:0)*.10)*100)}% chance per special offer (currently shown for the locked wager).</p><button class="btn primary" id="toBattle" ${game.anteId?'':'disabled'}>${game.attempt===1?'Begin skirmish':'Retry skirmish'} →</button>`;
- case 'battle':return `<div class="eyebrow">Chess move</div><h2>${current?.turn==='w'?'Select a piece on the board':'Raiders are thinking…'}</h2><p>Move by <strong>tap → tap</strong> or <strong>click → click</strong>. These are the same controls on both platforms. Keyboard users can use Tab, arrow keys and Enter.</p><p class="small">${game.moveHistory.slice(-3).join('<br>')||'No moves yet.'}</p><div class="btnrow"><button class="btn danger" id="giveUp">Concede this attempt</button></div>`;
- case 'retry':return `<div class="eyebrow">Review and adapt</div><h2>Try another formation</h2><p>Initial enemy positions remain the same. Your wager persists.</p><button class="btn primary" id="retryBtn">Rearrange and retry →</button>`;
- case 'draw':return `<div class="eyebrow">Draw</div><h2>Reset the deadlock</h2><button class="btn primary" id="drawRetry">Redeploy and try again →</button>`;
- case 'victory':return `<div class="eyebrow">Aftermath · recruitment</div><h2>Survivors looking for a place</h2><p>You have ${game.scrap} scrap. Recruitment costs: Pawn 1 · Knight/Bishop 2 · Rook 3 · Queen 4. Offers were influenced by your wagered companion's ${game.offerXP||0} XP.</p>${(game.offers||[]).map(u=>`<div class="offerline"><div><b>${SYMBOL.w[u.type]} ${u.name} · ${TYPES[u.type]}</b><small>${u.age} · met at ${u.origin}</small></div><button class="btn tiny" data-recruit="${u.id}" ${game.scrap>=COST[u.type]?'':'disabled'}>Recruit · ${COST[u.type]}</button></div>`).join('')||'<p>All offers decided.</p>'}<div class="btnrow"><button class="btn primary" id="complete">Return to camp →</button></div>`;
- default:return '';
+  case 'choose':return cmdTitle(`Choose survivors · ${selectedStart.length}/5`,'Select 1–5 companions. Use Next to see more.')+
+    listPage(initialPool,u=>`<button class="person ${selectedStart.includes(u.id)?'sel':''}" data-start="${u.id}" aria-pressed="${selectedStart.includes(u.id)}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail">${playerText(u)}</span></button>`)+
+    actionButtons(`<button class="btn primary" id="begin" ${selectedStart.length?'':'disabled'}>Start campaign →</button>`);
+  case 'campaign':return cmdTitle('Crossroads',`Party: ${game.roster.length} survivor${game.roster.length===1?'':'s'}.`)+
+    `<p class="cmd-narrative">${game.flavor==='forfeit'?'The wager was lost. The road remains dangerous.':game.wins?'The raiders retreated. Another patrol waits ahead.':'Raiders block the west road. Decide how to approach.'}</p>`+
+    actionButtons(`<button class="btn primary" id="goRaid" ${game.roster.length?'':'disabled'}>Approach the raiders →</button>`);
+  case 'dialogue':return cmdTitle('Speak to the raiders')+`<p class="cmd-narrative">The Brotherhood of the Final Shadow demands tribute. What do you say?</p>`+
+    actionButtons('<button class="btn primary" data-talk="peace">Offer food and passage</button>','<button class="btn" data-talk="costume">Compliment costumes</button>');
+  case 'dialogue_reply':return cmdTitle('Negotiations failed')+`<p class="cmd-narrative">The raiders refused. Prepare your companions for chess combat.</p>`+
+    actionButtons('<button class="btn primary" id="toDeploy">Prepare the party →</button>');
+  case 'deploy':return cmdTitle(`Deploy · ${Object.keys(deploy).length} placed`,'Select a survivor, then tap an outlined board square.')+
+    listPage(game.roster,u=>`<button class="person ${selectedUnit===u.id?'sel':''} ${deploy[u.id]?'placed':''}" data-deploy="${u.id}" aria-pressed="${selectedUnit===u.id}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${deploy[u.id]?' · '+sq(deploy[u.id].r,deploy[u.id].c):''}</b><small>${TYPES[u.type]} · ${u.xp} XP</small></span></button>`)+
+    actionButtons('<button class="btn" id="autoDeploy">Auto-arrange</button>',`<button class="btn primary" id="toReveal" ${Object.keys(deploy).length?'':'disabled'}>Reveal enemy →</button>`);
+  case 'reveal':return cmdTitle(game.anteId?'Wager locked':`Choose an ante`,game.anteId?'Your wager stays locked for the remaining attempts.':'Wager one companion, deployed or at camp.')+
+    listPage(game.roster,u=>`<button class="person ${game.anteId===u.id?'sel':''}" data-ante="${u.id}" ${game.anteId?'disabled':''}><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${game.anteId===u.id?' · WAGERED':''}</b><small>${TYPES[u.type]} · ${u.xp} XP</small></span></button>`)+
+    actionButtons(`<button class="btn primary" id="toBattle" ${game.anteId?'':'disabled'}>Begin skirmish →</button>`);
+  case 'battle':return cmdTitle(current?.turn==='w'?'Your move':'Raiders moving…',`Attempt ${game.attempt}/3 · Tap a piece, then its destination.`)+
+    `<p class="cmd-narrative">${game.moveHistory.slice(-2).join(' · ')||'The battlefield is ready. Select your first move.'}</p>`+
+    actionButtons('<button class="btn danger" id="giveUp">Concede this attempt</button>');
+  case 'retry':return cmdTitle('Checkmate · attempt failed')+
+    `<p class="cmd-narrative">Your companion ante stays at risk. Re-arrange your team and adapt to what you learned.</p>`+
+    actionButtons('<button class="btn primary" id="retryBtn">Rearrange and retry →</button>');
+  case 'draw':return cmdTitle(`Deadlock · ${game.flavor}`)+
+    `<p class="cmd-narrative">A draw does not use up an attempt. Checkmate is required to win.</p>`+
+    actionButtons('<button class="btn primary" id="drawRetry">Redeploy →</button>');
+  case 'victory':return cmdTitle(`Victory · ${game.scrap} scrap`,'Recruit survivors or return to camp.')+
+    `<div class="offer-container">${(game.offers||[]).map(u=>`<div class="offerline"><div><b>${SYMBOL.w[u.type]} ${u.name} · ${TYPES[u.type]}</b><small>${u.age} · ${u.origin}</small></div><button class="btn tiny" data-recruit="${u.id}" ${game.scrap>=COST[u.type]?'':'disabled'}>Recruit · ${COST[u.type]}</button></div>`).join('')||'<p>Recruitment complete.</p>'}</div>`+
+    actionButtons('<button class="btn primary" id="complete">Return to camp →</button>');
+  default:return '';
 }}
+
 function renderControls(){doc('controls').innerHTML=controlsHTML();const on=(id,func)=>{const b=doc(id);if(b)b.onclick=func;};
+  doc('controls').querySelectorAll('[data-page]').forEach(el=>el.onclick=()=>{selectionPage+=Number(el.dataset.page);renderControls();});
   doc('controls').querySelectorAll('[data-start]').forEach(el=>el.onclick=()=>chooseStart(el.dataset.start));
   doc('controls').querySelectorAll('[data-talk]').forEach(el=>el.onclick=()=>dialogueChoice(el.dataset.talk));
   doc('controls').querySelectorAll('[data-deploy]').forEach(el=>el.onclick=()=>{selectedUnit=el.dataset.deploy;render();});
@@ -279,8 +423,19 @@ function deployBoard(){const b=emptyBoard();b[7][4]=mkr('w','K','king');for(cons
 function renderStats(){const wager=game.roster.find(u=>u.id===game.anteId);doc('stats').innerHTML=`<div class="statrow"><span class="pill gold">${game.scrap} scrap</span><span class="pill">${game.roster.length} companions</span><span class="pill">${game.wins} wins</span><span class="pill">${game.attempt}/3 attempt</span></div><p class="small muted" style="margin-top:10px">Current wager: ${wager?`${wager.name}, ${TYPES[wager.type]} (${wager.xp} XP)`:'none'}.</p><p class="small muted">Only checkmate wins. The King follows strict check rules. A successful battle makes companion casualties permanent.</p>`;}
 function renderRoster(){doc('roster').innerHTML=game.roster.length?game.roster.map(u=>`<div class="offerline"><div><b>${SYMBOL.w[u.type]} ${u.name} <span class="pill">${u.xp} XP</span></b><small>${TYPES[u.type]} · ${u.age} · ${u.origin}</small>${u.xp>=1?`<small class="success">Story: ${u.history}</small>`:''}${u.xp>=3?`<small class="success">Present: Survived ${u.missions} battles with the settlement.</small>`:''}</div></div>`).join(''):'<p class="small muted">No companions yet.</p>';}
 function renderEvents(){doc('events').innerHTML=game.records.slice(-9).reverse().map(r=>`<p><time>#${r.id}</time>${r.type.replaceAll('_',' ')}${r.id===game.records.at(-1)?.id?' <span class="highlight">• latest</span>':''}</p>`).join('')||'<p>History begins when you assemble your party.</p>';}
-function render(){renderStory();renderControls();renderBoard();renderStats();renderRoster();renderEvents();save();}
-doc('exportBtn').onclick=downloadEvents;doc('resetBtn').onclick=beginAgain;
+function render(){document.body.dataset.phase=game.phase;if(previousPhase!==game.phase){selectionPage=0;previousPhase=game.phase;}renderStory();renderControls();renderBoard();renderStats();renderRoster();renderEvents();save();}
+ function showDetails(){
+   doc('detailsBody').innerHTML=`<section class="details-section">${doc('story').innerHTML}</section><section class="details-section"><h3>Campaign state</h3>${doc('stats').innerHTML}</section><section class="details-section"><h3>Survivor records</h3>${doc('roster').innerHTML}</section><section class="details-section"><h3>What the world remembers</h3>${doc('events').innerHTML}</section>`;
+   doc('detailsModal').hidden=false;doc('detailsClose').focus();
+ }
+ function closeDetails(){doc('detailsModal').hidden=true;doc('detailsBtn').focus();}
+ doc('detailsBtn').onclick=showDetails;
+ doc('detailsClose').onclick=closeDetails;
+ doc('detailsModal').addEventListener('click',e=>{if(e.target===doc('detailsModal'))closeDetails();});
+ doc('detailsExport').onclick=downloadEvents;
+ doc('detailsReset').onclick=()=>{beginAgain();if(doc('detailsModal').hidden===false)closeDetails();};
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!doc('detailsModal').hidden)closeDetails();});
+ doc('exportBtn').onclick=downloadEvents;doc('resetBtn').onclick=beginAgain;
 doc('board').addEventListener('keydown',e=>{if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const node=e.target.closest('.square');if(!node)return;e.preventDefault();let r=Number(node.dataset.r),c=Number(node.dataset.c);if(e.key==='ArrowUp')r=Math.max(0,r-1);if(e.key==='ArrowDown')r=Math.min(7,r+1);if(e.key==='ArrowLeft')c=Math.max(0,c-1);if(e.key==='ArrowRight')c=Math.min(7,c+1);if(e.key==='Home')c=0;if(e.key==='End')c=7;doc('board').querySelector(`[data-r="${r}"][data-c="${c}"]`)?.focus();});
 window.__AGDG_TEST__={emptyBoard,mkr,apply,pseudo,legal,inCheck,attacked,drawCause,hash,insufficient,battleBoard,getGame:()=>game,getCurrent:()=>current};
 game=load()||fresh();if(game.phase==='reveal'||game.phase==='battle'||game.phase==='victory'||game.phase==='draw')current=game.battle||null;
