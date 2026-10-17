@@ -162,7 +162,7 @@ const places=['the flooded laundromat','the broken bus stop','the free clinic','
 const histories=['They once spent a winter keeping a neighborhood boiler alive.','They lied about their age to get a night shift in a hospital.','They know where the missing school books were hidden.','They learned to play chess using bottle caps and chalk.','They have a sister somewhere beyond the southern fence.','They used to fix bicycles for a living.','They can name every bird that survived the fires.'];
 const roleFaces={K:'♟',Q:'✦',R:'▣',B:'◇',N:'◆',P:'•'};
 const doc=id=>document.getElementById(id);
-let game=null, selectedStart=[], selectedUnit=null, selectedCell=null, legalForCell=[], deploy={}, current=null, lastMove=null, pendingPromotion=null, offers=[], lastReport='', aiThinking=false;
+let game=null, selectedStart=[], selectedUnit=null, selectedCell=null, legalForCell=[], deploy={}, kingPos={r:7,c:4}, current=null, lastMove=null, pendingPromotion=null, offers=[], lastReport='', aiThinking=false;
 const initialPool=[
 {id:'start-p1',name:'June',age:'about 28',type:'P',origin:'the old cannery',history:'June once organized a food line in a blackout.'},
 {id:'start-p2',name:'Penny',age:'about 51',type:'P',origin:'the pharmacy queue',history:'Penny knows exactly how to make a tomato grow in a tire.'},
@@ -178,7 +178,7 @@ const initialPool=[
 {id:'start-q1',name:'Mercy',age:'about 39',type:'Q',origin:'the old courthouse',history:'Mercy helped settle disputes when nobody trusted the courts.'}
 ];
 const king={id:'king',name:'The Wanderer',age:'unknown',type:'K',origin:'the highway',history:'Their history is still being written.',xp:0};
-function fresh(){return {phase:'choose',roster:[],scrap:0,wins:0,attempt:1,anteId:null,anteXP:0,records:[],nextEventId:1,offerNonce:0,moveHistory:[],battle:null,flavor:'',forcedRetry:false};}
+function fresh(){return {phase:'choose',roster:[],scrap:0,wins:0,attempt:1,anteId:null,anteXP:0,pendingAnteId:null,records:[],nextEventId:1,offerNonce:0,moveHistory:[],battle:null,flavor:'',forcedRetry:false};}
 function makeMember(src){return {...src,xp:src.xp||0,missions:src.missions||0};}
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(game));}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d && d.phase && Array.isArray(d.roster))return d;}catch(e){}return null;}
@@ -247,7 +247,7 @@ function legal(b,st,side){let out=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(
 function hash(st){let s='';for(const row of st.board)for(const p of row)s+=p?p.side+p.type+(p.moved?'1':'0'):'.';return s+'|'+st.turn+'|'+(st.ep?st.ep.r+','+st.ep.c:'-');}
 function drawCause(st){const possible=legal(st.board,st,st.turn);if(!possible.length&&!inCheck(st.board,st.turn))return 'stalemate';if(st.halfmove>=100)return 'fifty-move rule';if((st.counts?.[hash(st)]||0)>=3)return 'threefold repetition';if(insufficient(st.board))return 'insufficient mating material';return null;}
 function insufficient(b){const a=[];for(const row of b)for(const p of row)if(p&&p.type!=='K')a.push(p);if(a.length===0)return true;if(a.length===1&&['B','N'].includes(a[0].type))return true;return false;}
-function battleBoard(){const b=emptyBoard();b[7][4]=mkr('w','K','king');
+function battleBoard(){const b=emptyBoard();b[kingPos.r][kingPos.c]=mkr('w','K','king');
   for(const [id,pos] of Object.entries(deploy)){const u=game.roster.find(a=>a.id===id);if(u)b[pos.r][pos.c]=mkr('w',u.type,id);}
   const enemies=[['K',0,4],['R',0,0],['B',0,2],['N',0,6],['P',1,1],['P',1,3],['P',1,4],['P',1,5],['P',1,6]];
   for(const [i,[type,r,c]] of enemies.entries())b[r][c]=mkr('b',type,'raider-'+i);
@@ -258,24 +258,54 @@ function chooseStart(id){if(selectedStart.includes(id))selectedStart=selectedSta
 function startCampaign(){if(selectedStart.length<1)return;game.roster=selectedStart.map(id=>makeMember(initialPool.find(x=>x.id===id)));game.phase='campaign';event('party_founded',{members:game.roster.map(u=>({id:u.id,role:u.type}))});render();}
 function enterDialogue(){game.phase='dialogue';game.flavor='start';save();render();}
 function dialogueChoice(which){game.flavor=which;game.phase='dialogue_reply';event('negotiation_failed',{approach:which});render();}
-function beginDeploy(){game.phase='deploy';deploy={};selectedUnit=null;selectedCell=null;current=null;pendingPromotion=null;game.battle=null;game.moveHistory=[];save();render();}
-function canDeploy(u,r,c){if(!u)return false;return r===6||(r===7&&c!==4&&u.type!=='P');}
-function clickDeploy(r,c){const existing=Object.entries(deploy).find(([id,pos])=>pos.r===r&&pos.c===c);
+function beginDeploy(){game.phase='deploy';deploy={};kingPos={r:7,c:4};selectedUnit=null;selectedCell=null;current=null;pendingPromotion=null;game.battle=null;game.moveHistory=[];if(!game.anteId)game.pendingAnteId=null;save();render();}
+// Deployment is not a chess move. Any piece may start on either home rank.
+// Special moves are still checked later by the existing chess-rules engine.
+function canDeploy(u,r,c){return !!u&&(r===6||r===7);}
+function clickDeploy(r,c){
+  if(kingPos.r===r&&kingPos.c===c){selectedUnit='king';render();return;}
+  const existing=Object.entries(deploy).find(([id,pos])=>pos.r===r&&pos.c===c);
   if(existing){delete deploy[existing[0]];selectedUnit=existing[0];render();return;}
   if(!selectedUnit)return;
-  const u=game.roster.find(x=>x.id===selectedUnit);if(!canDeploy(u,r,c)){ann('Deploy on your two home ranks. Pawns begin on rank 2.');return;}
-  delete deploy[selectedUnit];deploy[selectedUnit]={r,c};selectedUnit=null;render();
+  const u=selectedUnit==='king'?king:game.roster.find(x=>x.id===selectedUnit);
+  if(!canDeploy(u,r,c)){const message='Place units on rank 1 or rank 2.';ann(message);doc('boardHelp').textContent=message;return;}
+  if(selectedUnit==='king')kingPos={r,c};
+  else{delete deploy[selectedUnit];deploy[selectedUnit]={r,c};}
+  selectedUnit=null;render();
 }
 function autoDeploy(){deploy={};const preferred={R:[[7,0],[7,7]],N:[[7,1],[7,6]],B:[[7,2],[7,5]],Q:[[7,3]],P:[]};
-  const used=new Set(['7,4']);for(const u of game.roster.slice(0,15)){let site;
+  const used=new Set([kingPos.r+','+kingPos.c]);for(const u of game.roster.slice(0,15)){let site;
     const candidates=[...(preferred[u.type]||[]),...Array.from({length:8},(_,c)=>[6,c]),...Array.from({length:8},(_,c)=>[7,c])];
     for(const [r,c] of candidates)if(!used.has(r+','+c)&&canDeploy(u,r,c)){site={r,c};break;}
     if(site){deploy[u.id]=site;used.add(site.r+','+site.c);}
   }selectedUnit=null;render();
 }
-function reveal(){if(!Object.keys(deploy).length){ann('Deploy at least one companion.');return;}current=battleBoard();game.battle=current;game.phase='reveal';event('formation_revealed',{deployment:Object.entries(deploy).map(([id,s])=>({id,square:sq(s.r,s.c)})),attempt:game.attempt});render();}
-function lockAnte(id){if(game.anteId){ann('The wager is locked for all three attempts.');return;}const u=game.roster.find(u=>u.id===id);if(!u)return;game.anteId=id;game.anteXP=u.xp;event('ante_locked',{companion:id,xp:u.xp});render();}
-function startFight(){if(!game.anteId)return;game.phase='battle';game.battle=current;current.counts=current.counts||{[hash(current)]:1};save();render();ann('Your move. Select a survivor, then a highlighted square.');}
+function reveal(){
+  if(!Object.keys(deploy).length){ann('Deploy at least one companion.');return;}
+  const candidate=battleBoard();
+  if(inCheck(candidate.board,'w')||inCheck(candidate.board,'b')){
+    const message='Invalid formation: neither King may begin in check. Rearrange your team.';
+    ann(message);doc('boardHelp').textContent=message;return;
+  }
+  current=candidate;game.battle=current;game.phase='reveal';
+  event('formation_revealed',{kingSquare:sq(kingPos.r,kingPos.c),deployment:Object.entries(deploy).map(([id,s])=>({id,square:sq(s.r,s.c)})),attempt:game.attempt});render();
+}
+// Selecting an ante is reversible until Begin Skirmish commits it.
+function chooseAnte(id){
+  if(game.anteId)return;
+  if(!game.roster.some(u=>u.id===id))return;
+  game.pendingAnteId=game.pendingAnteId===id?null:id;
+  render();
+}
+function startFight(){
+  if(!game.anteId){
+    const chosen=game.roster.find(u=>u.id===game.pendingAnteId);
+    if(!chosen)return;
+    game.anteId=chosen.id;game.anteXP=chosen.xp;game.pendingAnteId=null;
+    event('ante_locked',{companion:chosen.id,xp:chosen.xp});
+  }
+  game.phase='battle';game.battle=current;current.counts=current.counts||{[hash(current)]:1};save();render();ann('Your move. Select a survivor, then a highlighted square.');
+}
 function sq(r,c){return 'abcdefgh'[c]+(8-r);}
 function moveStr(m){return sq(m.r,m.c)+'→'+sq(m.tr,m.tc)+(m.promotion?'='+m.promotion:'')+(m.special==='castleK'?' (O-O)':m.special==='castleQ'?' (O-O-O)':m.special==='enpassant'?' (en passant)':'');}
 function clickBattle(r,c){if(aiThinking||!current||current.turn!=='w'||game.phase!=='battle'||pendingPromotion)return;
@@ -338,10 +368,10 @@ function recruit(id){const unit=(game.offers||[]).find(u=>u.id===id);if(!unit)re
   game.scrap-=COST[unit.type];game.roster.push(unit);game.offers=game.offers.filter(u=>u.id!==id);
   event('survivor_recruited',{id:unit.id,role:unit.type,cost:COST[unit.type],from:'raider aftermath'});render();
 }
-function finishVictory(){game.phase='campaign';game.flavor='won';game.offers=[];deploy={};current=null;save();render();}
-function retryStart(){game.phase='deploy';deploy={};current=null;selectedUnit=null;selectedCell=null;save();render();}
-function drawRetry(){game.phase='deploy';deploy={};current=null;selectedUnit=null;selectedCell=null;save();render();}
-function beginAgain(){if(!confirm('Erase this campaign and start with a new party? This cannot be undone.'))return;localStorage.removeItem(SAVE_KEY);selectedStart=[];deploy={};current=null;lastMove=null;game=fresh();render();}
+function finishVictory(){game.phase='campaign';game.flavor='won';game.offers=[];deploy={};kingPos={r:7,c:4};current=null;save();render();}
+function retryStart(){game.phase='deploy';deploy={};kingPos={r:7,c:4};current=null;selectedUnit=null;selectedCell=null;save();render();}
+function drawRetry(){game.phase='deploy';deploy={};kingPos={r:7,c:4};current=null;selectedUnit=null;selectedCell=null;save();render();}
+function beginAgain(){if(!confirm('Erase this campaign and start with a new party? This cannot be undone.'))return;localStorage.removeItem(SAVE_KEY);selectedStart=[];deploy={};kingPos={r:7,c:4};current=null;lastMove=null;game=fresh();render();}
 function downloadEvents(){const lines=game.records.map(r=>JSON.stringify(r)).join('\n')+'\n';const blob=new Blob([lines],{type:'application/x-ndjson;charset=utf-8'}),url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='agdg-raider-history.jsonl';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function playerText(p){if(!p)return '';return `<b>${p.name}</b><small>${TYPES[p.type]} · ${p.age} · met at ${p.origin}</small>`;}
 function renderStory(){let h='';
@@ -350,7 +380,7 @@ function renderStory(){let h='';
  case 'campaign':h=`<div class="eyebrow">Campaign · crossroads settlement</div><h2>${game.flavor==='forfeit'?'The wager was lost.':game.wins?'A little safer, for now.':'The road is blocked.'}</h2><p>${game.flavor==='forfeit'?'You return without the companion you pledged. The raiders are still there.':game.wins?'News travels: the raiders learned the value of humility. Their friends may not have.':'A group of self-appointed wasteland royalty is harassing travelers at the west road. Someone has to speak to them.'}</p><div class="narrative">“Survival rule number one,” says a neighbor. “Never trust anybody with a skull painted on a skull.”</div>`;break;
  case 'dialogue':h=`<div class="eyebrow">Scene 01 · diplomacy</div><h2>The Brotherhood of the Final Shadow</h2><p>A raider wearing twelve belts steps forward. Their leader points at your group.</p><div class="narrative"><strong>Raider:</strong> “You stand before the Void Regent's Eternal Tribunal of Blood.”<br><strong>King:</strong> “Is that the homeowners' association?”<br><strong>Raider:</strong> “...No.”</div><p>They're armed, nervous, and clearly younger than the name suggests.</p>`;break;
  case 'dialogue_reply':h=`<div class="eyebrow">Negotiations · concluded badly</div><h2>Diplomacy was attempted.</h2><div class="narrative"><strong>King:</strong> “${game.flavor==='peace'?'You can keep the road open and we can trade food. Everybody gets home.':'Who made those costumes? Your grandmother? Because the stitching is pretty good.'}”<br><strong>Raider:</strong> “We appreciate the ${game.flavor==='peace'?'offer':'constructive feedback'}, but the Void Tribunal demands tribute.”<br><strong>King:</strong> “Of course it does.”</div><p>The raiders take their positions. You must checkmate their King to clear the road.</p>`;break;
- case 'deploy':h=`<div class="eyebrow">Stage 1 · deploy blind · attempt ${game.attempt}/3</div><h2>Put your people where you need them.</h2><p>Choose survivors and tap or click your two home ranks. <strong>Pawns start on rank 2.</strong> Your King begins on e1. Enemy positions stay hidden until you commit the formation.</p><div class="hint">${game.anteId?'Your existing ante stays locked for the remaining attempts.':'You will inspect the enemy formation before choosing your ante.'} ${game.attempt>1?'The enemy starts exactly where you saw them last time.': ''}</div>`;break;
+ case 'deploy':h=`<div class="eyebrow">Stage 1 · deploy blind · attempt ${game.attempt}/3</div><h2>Put your people where you need them.</h2><p>Choose survivors and deploy on either home rank. <strong>You may move your King and deploy Pawns on rank 1.</strong> Traditional starting squares preserve eligible special moves. Enemy positions stay hidden until you commit the formation.</p><div class="hint">${game.anteId?'Your existing ante stays locked for the remaining attempts.':'You will inspect the enemy formation before choosing your ante.'} ${game.attempt>1?'The enemy starts exactly where you saw them last time.': ''}</div>`;break;
  case 'reveal':h=`<div class="eyebrow">Stage 2 · enemy revealed · attempt ${game.attempt}/3</div><h2>The mask collection advances.</h2><p>Study their position. The King in the north is your checkmate target. ${game.anteId?'Your previous wager is locked.':'Choose one companion as your ante. Three checkmates against your King will forfeit that companion.'}</p><div class="hint">Both sides obey traditional chess rules. One move per turn, castling, en passant, check, checkmate, promotion and draws are enforced.</div>`;break;
  case 'battle':h=`<div class="eyebrow">Stage 3 · fight · attempt ${game.attempt}/3</div><h2>${current?.turn==='w'?'Your turn.':'The raiders move.'}</h2><p>Tap or click a survivor, then a highlighted destination. Yellow rings show legal moves. Checkmate their King. If you win, any companions captured on the way remain dead.</p><div class="statrow"><span class="pill">Ante: ${game.roster.find(u=>u.id===game.anteId)?.name||'—'}</span><span class="pill">${game.attempt}/3 attempts</span><span class="pill">${current?.ply||0} half-moves</span></div>`;break;
  case 'retry':h=`<div class="eyebrow">King checkmated · attempt ${game.attempt-1}/3 failed</div><h2>Death is an expensive tutor.</h2><p>The encounter resets. Every companion captured during that failed attempt is restored. You can rearrange your formation using what you've learned.</p><div class="narrative">“I have some notes,” says the King, who is technically dead for the second time this afternoon.</div><p>Your ante remains <strong>${game.roster.find(u=>u.id===game.anteId)?.name}</strong>. ${4-game.attempt} attempt${4-game.attempt===1?'':'s'} remain.</p>`;break;
@@ -380,12 +410,12 @@ function controlsHTML(){switch(game.phase){
     actionButtons('<button class="btn primary" data-talk="peace">Offer food and passage</button>','<button class="btn" data-talk="costume">Compliment costumes</button>');
   case 'dialogue_reply':return cmdTitle('Negotiations failed')+`<p class="cmd-narrative">The raiders refused. Prepare your companions for chess combat.</p>`+
     actionButtons('<button class="btn primary" id="toDeploy">Prepare the party →</button>');
-  case 'deploy':return cmdTitle(`Deploy · ${Object.keys(deploy).length} placed`,'Select a survivor, then tap an outlined board square.')+
-    listPage(game.roster,u=>`<button class="person ${selectedUnit===u.id?'sel':''} ${deploy[u.id]?'placed':''}" data-deploy="${u.id}" aria-pressed="${selectedUnit===u.id}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${deploy[u.id]?' · '+sq(deploy[u.id].r,deploy[u.id].c):''}</b><small>${TYPES[u.type]} · ${u.xp} XP</small></span></button>`)+
+  case 'deploy':return cmdTitle(`Deploy · ${Object.keys(deploy).length} placed`,'Select a unit, then a square on rank 1 or 2. King may move too.')+
+    listPage([king,...game.roster],u=>`<button class="person ${selectedUnit===u.id?'sel':''} ${u.id==='king'||deploy[u.id]?'placed':''}" data-deploy="${u.id}" aria-pressed="${selectedUnit===u.id}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${u.id==='king'?' · '+sq(kingPos.r,kingPos.c):deploy[u.id]?' · '+sq(deploy[u.id].r,deploy[u.id].c):''}</b><small>${TYPES[u.type]}${u.id==='king'?' · mandatory':' · '+u.xp+' XP'}</small></span></button>`)+
     actionButtons('<button class="btn" id="autoDeploy">Auto-arrange</button>',`<button class="btn primary" id="toReveal" ${Object.keys(deploy).length?'':'disabled'}>Reveal enemy →</button>`);
-  case 'reveal':return cmdTitle(game.anteId?'Wager locked':`Choose an ante`,game.anteId?'Your wager stays locked for the remaining attempts.':'Wager one companion, deployed or at camp.')+
-    listPage(game.roster,u=>`<button class="person ${game.anteId===u.id?'sel':''}" data-ante="${u.id}" ${game.anteId?'disabled':''}><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${game.anteId===u.id?' · WAGERED':''}</b><small>${TYPES[u.type]} · ${u.xp} XP</small></span></button>`)+
-    actionButtons(`<button class="btn primary" id="toBattle" ${game.anteId?'':'disabled'}>Begin skirmish →</button>`);
+  case 'reveal':return cmdTitle(game.anteId?'Wager locked':'Choose an ante',game.anteId?'Locked across all attempts.':'Tap to select; tap again to cancel or choose someone else. Locked when battle starts.')+
+    listPage(game.roster,u=>`<button class="person ${game.anteId===u.id||game.pendingAnteId===u.id?'sel':''}" data-ante="${u.id}" ${game.anteId?'disabled':''} aria-pressed="${game.anteId===u.id||game.pendingAnteId===u.id}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${game.anteId===u.id?' · LOCKED':game.pendingAnteId===u.id?' · SELECTED':''}</b><small>${TYPES[u.type]} · ${u.xp} XP</small></span></button>`)+
+    actionButtons(`<button class="btn primary" id="toBattle" ${game.anteId||game.pendingAnteId?'':'disabled'}>Begin skirmish →</button>`);
   case 'battle':return cmdTitle(current?.turn==='w'?'Your move':'Raiders moving…',`Attempt ${game.attempt}/3 · Tap a piece, then its destination.`)+
     `<p class="cmd-narrative">${game.moveHistory.slice(-2).join(' · ')||'The battlefield is ready. Select your first move.'}</p>`+
     actionButtons('<button class="btn danger" id="giveUp">Concede this attempt</button>');
@@ -406,7 +436,7 @@ function renderControls(){doc('controls').innerHTML=controlsHTML();const on=(id,
   doc('controls').querySelectorAll('[data-start]').forEach(el=>el.onclick=()=>chooseStart(el.dataset.start));
   doc('controls').querySelectorAll('[data-talk]').forEach(el=>el.onclick=()=>dialogueChoice(el.dataset.talk));
   doc('controls').querySelectorAll('[data-deploy]').forEach(el=>el.onclick=()=>{selectedUnit=el.dataset.deploy;render();});
-  doc('controls').querySelectorAll('[data-ante]').forEach(el=>el.onclick=()=>lockAnte(el.dataset.ante));
+  doc('controls').querySelectorAll('[data-ante]').forEach(el=>el.onclick=()=>chooseAnte(el.dataset.ante));
   doc('controls').querySelectorAll('[data-recruit]').forEach(el=>el.onclick=()=>recruit(el.dataset.recruit));
   on('begin',startCampaign);on('goRaid',enterDialogue);on('toDeploy',beginDeploy);on('autoDeploy',autoDeploy);on('toReveal',reveal);on('toBattle',startFight);on('giveUp',concede);on('retryBtn',retryStart);on('drawRetry',drawRetry);on('complete',finishVictory);
 }
@@ -414,19 +444,19 @@ function renderBoard(){const defeated=game.phase==='retry'||(game.phase==='campa
  const b=game.phase==='battle'||game.phase==='reveal'||game.phase==='victory'||game.phase==='draw'||defeated?current?.board:game.phase==='deploy'?deployBoard():null;
  doc('boardPanel').classList.toggle('is-defeated',defeated&&!!b);
  const board=doc('board');let html='';const allowed=legalForCell;for(let r=0;r<8;r++)for(let c=0;c<8;c++){
-  const p=b?.[r]?.[c]||null;const home=game.phase==='deploy'&&(r===6||(r===7&&c!==4));const sel=selectedCell?.r===r&&selectedCell?.c===c;const lm=lastMove&&(lastMove.tr===r&&lastMove.tc===c);const legalDest=allowed.some(m=>m.tr===r&&m.tc===c),check=p?.type==='K'&&b&&inCheck(b,p.side);const side=p?.side;
+  const p=b?.[r]?.[c]||null;const home=game.phase==='deploy'&&(r===6||r===7);const sel=selectedCell?.r===r&&selectedCell?.c===c;const lm=lastMove&&(lastMove.tr===r&&lastMove.tc===c);const legalDest=allowed.some(m=>m.tr===r&&m.tc===c),check=p?.type==='K'&&b&&inCheck(b,p.side);const side=p?.side;
   const person=side==='w'?(p.id==='king'?king:game.roster.find(u=>u.id===p.id)):null;
   const label=p?`${sq(r,c)} ${side==='w'?'friendly':'raider'} ${TYPES[p.type]} ${person?.name||''}`:`${sq(r,c)} empty`;
   html+=`<button type="button" class="square ${(r+c)%2?'dark':'light'} ruined ${home?'validhome':''} ${sel?'focused':''} ${legalDest?'legal':''} ${legalDest&&p?'capture':''} ${lm?'lastmove':''} ${check?'check':''}" data-r="${r}" data-c="${c}" aria-label="${label}" aria-pressed="${!!sel}" title="${label}">${p?`<span class="sprite ${side==='b'?'enemy':''} ${p.type==='K'?'king':''}"><span class="head" aria-hidden="true">${side==='b'?'☠':'♟'}</span><span class="role" aria-hidden="true">${SYMBOL[side][p.type]}</span></span>`:''}<span class="coords" aria-hidden="true">${sq(r,c)}</span></button>`;
  }
  board.innerHTML=html;board.querySelectorAll('.square').forEach(el=>el.onclick=()=>{const r=Number(el.dataset.r),c=Number(el.dataset.c);if(game.phase==='deploy')clickDeploy(r,c);else if(game.phase==='battle')clickBattle(r,c);});
- let note='';if(defeated&&b)note='Final position — inspect the board, then continue.';else if(game.phase==='deploy')note='Gold outlines = deployment squares. Pawns start on the second rank.';
+ let note='';if(defeated&&b)note='Final position — inspect the board, then continue.';else if(game.phase==='deploy')note='Gold outlines = home ranks. King and Pawns may start on either rank.';
  else if(game.phase==='battle')note='Select a survivor → choose a highlighted destination. Tap/click on either device.';
  else if(game.phase==='reveal')note='The enemy is revealed. Choose your wager in the panel.';
  else if(b)note='Chess battlefield · 8 × 8 · top = raiders, bottom = survivors';else note='A standard 8 × 8 battlefield awaits your survivors.';
  doc('boardHelp').textContent=note;
 }
-function deployBoard(){const b=emptyBoard();b[7][4]=mkr('w','K','king');for(const [id,pos] of Object.entries(deploy)){const u=game.roster.find(u=>u.id===id);if(u)b[pos.r][pos.c]=mkr('w',u.type,id);}return b;}
+function deployBoard(){const b=emptyBoard();b[kingPos.r][kingPos.c]=mkr('w','K','king');for(const [id,pos] of Object.entries(deploy)){const u=game.roster.find(u=>u.id===id);if(u)b[pos.r][pos.c]=mkr('w',u.type,id);}return b;}
 function renderStats(){const wager=game.roster.find(u=>u.id===game.anteId);doc('stats').innerHTML=`<div class="statrow"><span class="pill gold">${game.scrap} scrap</span><span class="pill">${game.roster.length} companions</span><span class="pill">${game.wins} wins</span><span class="pill">${game.attempt}/3 attempt</span></div><p class="small muted" style="margin-top:10px">Current wager: ${wager?`${wager.name}, ${TYPES[wager.type]} (${wager.xp} XP)`:'none'}.</p><p class="small muted">Only checkmate wins. The King follows strict check rules. A successful battle makes companion casualties permanent.</p>`;}
 function renderRoster(){doc('roster').innerHTML=game.roster.length?game.roster.map(u=>`<div class="offerline"><div><b>${SYMBOL.w[u.type]} ${u.name} <span class="pill">${u.xp} XP</span></b><small>${TYPES[u.type]} · ${u.age} · ${u.origin}</small>${u.xp>=1?`<small class="success">Story: ${u.history}</small>`:''}${u.xp>=3?`<small class="success">Present: Survived ${u.missions} battles with the settlement.</small>`:''}</div></div>`).join(''):'<p class="small muted">No companions yet.</p>';}
 function renderEvents(){doc('events').innerHTML=game.records.slice(-9).reverse().map(r=>`<p><time>#${r.id}</time>${r.type.replaceAll('_',' ')}${r.id===game.records.at(-1)?.id?' <span class="highlight">• latest</span>':''}</p>`).join('')||'<p>History begins when you assemble your party.</p>';}
