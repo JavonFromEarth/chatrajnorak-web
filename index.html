@@ -121,6 +121,11 @@ main{flex:1 1 0;min-height:0;overflow:hidden;padding-top:9px;padding-bottom:9px}
   #controls .person{min-height:0}
   #controls .people{grid-template-rows:repeat(2,minmax(0,1fr))}
 }
+/* v0.3: The final position remains readable after defeat. */
+#boardPanel.is-defeated .board-shell::after{
+  content:"";position:absolute;inset:0;border-radius:6px;
+  background:rgba(8,12,13,.24);pointer-events:none;z-index:5
+}
 </style>
 </head>
 <body>
@@ -312,8 +317,8 @@ function chooseEnemyMove(){const moves=legal(current.board,current,'b');if(!move
   }return best;
 }
 function loseAttempt(reason){game.attempt++;event('king_checkmated',{attempt:game.attempt-1,reason});lastReport='Your King was checkmated. The encounter resets; casualties from this attempt return.';
-  if(game.attempt>3){const u=game.roster.find(x=>x.id===game.anteId);game.roster=game.roster.filter(x=>x.id!==game.anteId);event('ante_forfeited',{id:game.anteId,role:u?.type,xp:u?.xp});game.anteId=null;game.anteXP=0;game.attempt=1;game.phase='campaign';game.flavor='forfeit';deploy={};current=null;
-  }else{game.phase='retry';current=null;deploy={};}save();render();}
+  if(game.attempt>3){const u=game.roster.find(x=>x.id===game.anteId);game.roster=game.roster.filter(x=>x.id!==game.anteId);event('ante_forfeited',{id:game.anteId,role:u?.type,xp:u?.xp});game.anteId=null;game.anteXP=0;game.attempt=1;game.phase='campaign';game.flavor='forfeit';deploy={};
+  }else{game.phase='retry';deploy={};}save();render();}
 function concede(){if(game.phase!=='battle')return;if(confirm('Count this as a failed attempt? Your wager remains at risk.'))loseAttempt('conceded');}
 function win(){const alive=new Map();for(const row of current.board)for(const p of row)if(p?.side==='w')alive.set(p.id,p);
   const killed=game.roster.filter(u=>Object.hasOwn(deploy,u.id)&&!alive.has(u.id));
@@ -405,7 +410,9 @@ function renderControls(){doc('controls').innerHTML=controlsHTML();const on=(id,
   doc('controls').querySelectorAll('[data-recruit]').forEach(el=>el.onclick=()=>recruit(el.dataset.recruit));
   on('begin',startCampaign);on('goRaid',enterDialogue);on('toDeploy',beginDeploy);on('autoDeploy',autoDeploy);on('toReveal',reveal);on('toBattle',startFight);on('giveUp',concede);on('retryBtn',retryStart);on('drawRetry',drawRetry);on('complete',finishVictory);
 }
-function renderBoard(){const b=game.phase==='battle'||game.phase==='reveal'||game.phase==='victory'||game.phase==='draw'?current?.board:game.phase==='deploy'?deployBoard():null;
+function renderBoard(){const defeated=game.phase==='retry'||(game.phase==='campaign'&&game.flavor==='forfeit');
+ const b=game.phase==='battle'||game.phase==='reveal'||game.phase==='victory'||game.phase==='draw'||defeated?current?.board:game.phase==='deploy'?deployBoard():null;
+ doc('boardPanel').classList.toggle('is-defeated',defeated&&!!b);
  const board=doc('board');let html='';const allowed=legalForCell;for(let r=0;r<8;r++)for(let c=0;c<8;c++){
   const p=b?.[r]?.[c]||null;const home=game.phase==='deploy'&&(r===6||(r===7&&c!==4));const sel=selectedCell?.r===r&&selectedCell?.c===c;const lm=lastMove&&(lastMove.tr===r&&lastMove.tc===c);const legalDest=allowed.some(m=>m.tr===r&&m.tc===c),check=p?.type==='K'&&b&&inCheck(b,p.side);const side=p?.side;
   const person=side==='w'?(p.id==='king'?king:game.roster.find(u=>u.id===p.id)):null;
@@ -413,7 +420,7 @@ function renderBoard(){const b=game.phase==='battle'||game.phase==='reveal'||gam
   html+=`<button type="button" class="square ${(r+c)%2?'dark':'light'} ruined ${home?'validhome':''} ${sel?'focused':''} ${legalDest?'legal':''} ${legalDest&&p?'capture':''} ${lm?'lastmove':''} ${check?'check':''}" data-r="${r}" data-c="${c}" aria-label="${label}" aria-pressed="${!!sel}" title="${label}">${p?`<span class="sprite ${side==='b'?'enemy':''} ${p.type==='K'?'king':''}"><span class="head" aria-hidden="true">${side==='b'?'☠':'♟'}</span><span class="role" aria-hidden="true">${SYMBOL[side][p.type]}</span></span>`:''}<span class="coords" aria-hidden="true">${sq(r,c)}</span></button>`;
  }
  board.innerHTML=html;board.querySelectorAll('.square').forEach(el=>el.onclick=()=>{const r=Number(el.dataset.r),c=Number(el.dataset.c);if(game.phase==='deploy')clickDeploy(r,c);else if(game.phase==='battle')clickBattle(r,c);});
- let note='';if(game.phase==='deploy')note='Gold outlines = deployment squares. Pawns start on the second rank.';
+ let note='';if(defeated&&b)note='Final position — inspect the board, then continue.';else if(game.phase==='deploy')note='Gold outlines = deployment squares. Pawns start on the second rank.';
  else if(game.phase==='battle')note='Select a survivor → choose a highlighted destination. Tap/click on either device.';
  else if(game.phase==='reveal')note='The enemy is revealed. Choose your wager in the panel.';
  else if(b)note='Chess battlefield · 8 × 8 · top = raiders, bottom = survivors';else note='A standard 8 × 8 battlefield awaits your survivors.';
@@ -438,7 +445,7 @@ function render(){document.body.dataset.phase=game.phase;if(previousPhase!==game
  doc('exportBtn').onclick=downloadEvents;doc('resetBtn').onclick=beginAgain;
 doc('board').addEventListener('keydown',e=>{if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const node=e.target.closest('.square');if(!node)return;e.preventDefault();let r=Number(node.dataset.r),c=Number(node.dataset.c);if(e.key==='ArrowUp')r=Math.max(0,r-1);if(e.key==='ArrowDown')r=Math.min(7,r+1);if(e.key==='ArrowLeft')c=Math.max(0,c-1);if(e.key==='ArrowRight')c=Math.min(7,c+1);if(e.key==='Home')c=0;if(e.key==='End')c=7;doc('board').querySelector(`[data-r="${r}"][data-c="${c}"]`)?.focus();});
 window.__AGDG_TEST__={emptyBoard,mkr,apply,pseudo,legal,inCheck,attacked,drawCause,hash,insufficient,battleBoard,getGame:()=>game,getCurrent:()=>current};
-game=load()||fresh();if(game.phase==='reveal'||game.phase==='battle'||game.phase==='victory'||game.phase==='draw')current=game.battle||null;
+game=load()||fresh();if(['reveal','battle','victory','draw','retry'].includes(game.phase)||(game.phase==='campaign'&&game.flavor==='forfeit'))current=game.battle||null;
 if(game.phase==='deploy')deploy={};if(game.phase==='retry')deploy={};if(game.phase==='choose')selectedStart=[];
 if(game.phase==='victory')offers=game.offers||[];
 render();
