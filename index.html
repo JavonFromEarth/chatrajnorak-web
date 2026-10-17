@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#171c1d" />
-<title>AGDG / The Raider Skirmish — First Playable Experiment</title>
+<meta name="theme-color" content="#080c10" />
+<title>Chatrajnorak — Black Iron Prototype v0.5a</title>
 <style>
 :root{color-scheme:dark;--ink:#e9e5d5;--muted:#aeb6ad;--gold:#e9bf79;--sage:#94bba2;--red:#e49f87;--panel:#22292a;--line:#455052;--button:#354546}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#151b1c;color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button{font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}h1,h2,h3,p{margin:0}header{background:linear-gradient(115deg,#293031,#182021);border-bottom:1px solid #3a4445;padding:20px max(14px,calc((100vw - 1120px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:clamp(20px,3.3vw,31px);letter-spacing:.02em;line-height:1.1}header h1 span{color:var(--gold)}header p{font-size:12px;letter-spacing:.16em;color:#b7b5a3;text-transform:uppercase;margin-bottom:5px}.top-actions{display:flex;gap:8px;flex-wrap:wrap}main{max-width:1120px;margin:auto;padding:18px 14px 40px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(285px,.88fr);gap:18px;align-items:start}.stack{display:grid;gap:14px}.panel{background:var(--panel);border:1px solid #3e4a4a;border-radius:12px;padding:15px;box-shadow:0 9px 28px #0b10121e}.eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--gold);margin-bottom:8px}.panel h2{font-size:20px;margin-bottom:8px}.panel p{margin-bottom:8px;color:#d0d6cb}.muted{color:var(--muted)!important}.small{font-size:12px}.highlight{color:var(--gold);font-weight:700}.success{color:#b7e6b5}.danger{color:#ffc4b1}.ruleline{height:1px;background:#425052;margin:13px 0}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{background:var(--button);border:1px solid #657271;color:var(--ink);border-radius:8px;min-height:43px;padding:10px 13px;font-weight:700;line-height:1.2}.btn.primary{background:#c19c62;color:#141d1d;border-color:#e5bb74}.btn.danger{background:#573c38;border-color:#95675d}.btn:disabled{opacity:.42;cursor:not-allowed}.btn:hover:not(:disabled){filter:brightness(1.13)}.btn.tiny{padding:7px 9px;min-height:37px;font-size:12px}.pill{display:inline-flex;align-items:center;padding:3px 8px;border:1px solid #6c7e78;border-radius:999px;font-size:11px;color:#d9e0d5;white-space:nowrap}.pill.gold{border-color:#b99865;color:#f8d495}.statrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.narrative{background:#182121;border-left:3px solid var(--gold);padding:12px;margin:11px 0;border-radius:4px;font-size:14px}.narrative strong{color:#ffdfa7}.hint{background:#2a3433;border:1px solid #53665a;border-radius:9px;padding:10px;font-size:13px;color:#d2dacb;margin:10px 0}.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:10px 0}.person{border:1px solid #536061;border-radius:9px;background:#2d3838;color:#ebead9;text-align:left;padding:10px;min-height:75px;display:flex;gap:10px;align-items:center}.person.sel{border-color:var(--gold);background:#484132}.person.placed{border-color:#7cb59c;background:#2e423d}.person .glyph{font-size:27px;line-height:1;min-width:25px;text-align:center}.person .detail{flex:1}.person b,.person small{display:block}.person small{color:#bfcbc2}.person[disabled]{opacity:.44}.strip{margin:0;padding-left:20px;color:#cad6cf}.strip li{margin:5px 0}.board-shell{position:relative;max-width:580px;margin:0 auto}.board{width:100%;aspect-ratio:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));border:3px solid #879086;border-radius:6px;overflow:hidden;background:#4f605d;box-shadow:0 6px 20px #0008}.square{appearance:none;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;position:relative;min-width:0;min-height:0;padding:0;color:#f9f3db;user-select:none}.square.light{background:#66766c}.square.dark{background:#43534c}.square:after{content:"";position:absolute;inset:9%;opacity:.16;pointer-events:none;background-image:linear-gradient(100deg,transparent 47%,#d7d5bb 50%,transparent 53%);transform:rotate(12deg)}.square.ruined{background-image:radial-gradient(circle at 68% 27%,#c2a37b26 0 8%,transparent 9%),linear-gradient(35deg,transparent 40%,#1a282629 41% 43%,transparent 44%)}.square.validhome{box-shadow:inset 0 0 0 2px #e2c17e69}.square.focused{box-shadow:inset 0 0 0 4px #e6c27c;z-index:2}.square.legal::before{content:"";position:absolute;width:26%;aspect-ratio:1;border-radius:50%;background:#f4d493b4;z-index:1;box-shadow:0 0 0 3px #293a3666}.square.capture::before{width:76%;aspect-ratio:1;border:4px solid #f3bc82;background:transparent;box-shadow:none}.square.lastmove{box-shadow:inset 0 0 0 4px #a5d39f77}.square.check{box-shadow:inset 0 0 0 5px #f0806f;animation:alertpulse 1.5s ease-in-out infinite}@keyframes alertpulse{50%{box-shadow:inset 0 0 0 7px #f0806fb5}}.coords{position:absolute;bottom:2px;left:4px;font-size:clamp(8px,1.5vw,10px);color:#f4ead0bb;z-index:1;pointer-events:none}.sprite{z-index:3;position:relative;display:grid;place-items:center;width:81%;height:84%;max-width:58px;max-height:58px;border-radius:40% 40% 20% 20%;border:2px solid #d4d0b5;background:linear-gradient(#b6c1a6,#536b64);box-shadow:0 3px 5px #131e19a0, inset 0 -9px 0 #0002;color:#152221}.sprite.enemy{border-color:#e6b1a0;background:linear-gradient(#ad8278,#714645);color:#fff1d3}.sprite .head{font-size:clamp(17px,3.5vw,30px);line-height:1;transform:translateY(-3px)}.sprite .role{position:absolute;bottom:-5px;right:-4px;background:#f1e3ba;color:#27302d;min-width:21px;height:21px;border-radius:6px;border:1px solid #283b35;display:grid;place-items:center;font-size:16px}.sprite.enemy .role{background:#e9b2a4;color:#3a2622}.sprite.king{outline:2px solid #ead19a;outline-offset:1px}.board-note{font-size:12px;color:#acbbb2;margin-top:9px;text-align:center}.log{max-height:175px;overflow:auto;font-size:12px;line-height:1.5;color:#c9d3c9}.log p{border-bottom:1px solid #384646;margin-bottom:5px;padding-bottom:5px}.log time{color:#c5a979;margin-right:8px}.offerline{display:flex;align-items:center;justify-content:space-between;gap:9px;border-bottom:1px solid #465252;padding:8px 0}.offerline:last-child{border:0}.offerline b{display:block}.offerline small{color:#c4cec3}.statusline{color:#e9d5aa;font-size:13px;min-height:20px;margin:8px 0}#announce{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}.modal{position:fixed;inset:0;background:#080c0ddc;display:grid;place-items:center;z-index:50;padding:20px}.modal[hidden]{display:none}.modal-card{max-width:420px;width:100%;border:1px solid #bba378;border-radius:12px;padding:23px;background:#263131}.modal-card h2{margin:0 0 12px}.modal-card .btn{min-width:80px}.footertext{font-size:12px;color:#85988e;text-align:center;margin:8px auto}@media(max-width:780px){main{grid-template-columns:1fr;gap:12px;padding:10px 9px 26px}header{padding:13px 12px}.panel{padding:12px}.board-shell{max-width:min(96vw,500px)}.people{grid-template-columns:repeat(2,minmax(0,1fr))}.person{min-height:68px;padding:7px}.person .glyph{font-size:23px}.top-actions{width:100%}.top-actions .btn{flex:1;font-size:12px}}@media(max-width:380px){.people{grid-template-columns:1fr 1fr;gap:5px}.person{gap:5px;font-size:12px}.person small{font-size:10px}.sprite{border-width:1px}.sprite .role{font-size:13px;min-width:17px;height:17px}.coords{font-size:8px}}@media(prefers-reduced-motion:reduce){.square.check{animation:none}} 
@@ -126,11 +126,49 @@ main{flex:1 1 0;min-height:0;overflow:hidden;padding-top:9px;padding-bottom:9px}
   content:"";position:absolute;inset:0;border-radius:6px;
   background:rgba(8,12,13,.24);pointer-events:none;z-index:5
 }
+/* v0.5a · BLACK IRON: the darkness is cool, the surviving metal is warm and dirty. */
+:root{--ink:#cfcfc7;--muted:#98a5a5;--gold:#a88865;--sage:#8c9c95;--red:#ae7568;--panel:#10171b;--line:#344044;--button:#1d2a2e}
+html,body{background:#080c10;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:linear-gradient(112deg,#11191d,#080c10);border-bottom:1px solid #313a3e}
+header h1,.panel h2,.cmd-head h2,.modal-card h2{
+  font-family:Impact,Haettenschweiler,"Arial Narrow","Arial Black","DejaVu Sans Condensed",system-ui,sans-serif;
+  font-weight:900;font-stretch:condensed;letter-spacing:.045em;text-transform:uppercase;line-height:1.07
+}
+header h1{color:#d6d6cc;letter-spacing:.055em}
+header h1 span{color:#a88865}
+header p,.eyebrow,.pill,.board-note,.statusline{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace}
+.panel{background:var(--panel);border-color:#303d42;box-shadow:0 9px 30px #0007}
+.panel p,.person{color:#c5c8c1}
+.btn{background:#1e2a2e;border-color:#48585b;color:#d1d3cc;border-radius:3px}
+.btn.primary{background:#8d6d51;border-color:#ad896b;color:#f3e8d9}
+.btn.danger{background:#382420;border-color:#754e43;color:#eed2c3}
+.person{background:#192429;border-color:#334448;border-radius:4px}
+.person.sel{background:#383127;border-color:#a88865}
+.person.placed{background:#223330;border-color:#60796b}
+.person small,.offerline small{color:#a3b0ae}
+.narrative{background:#0b1115;border-color:#8a6853;color:#c9c8c0}
+.narrative strong{color:#c9a689}
+.hint{background:#172125;border-color:#36494b;color:#b9c7c2}
+.board{border-color:#526062;background:#1a2427;box-shadow:0 8px 28px #000c}
+.square.light{background:#46565a}.square.dark{background:#1e2d32}
+.square.validhome{box-shadow:inset 0 0 0 2px #a888657a}
+.square.focused{box-shadow:inset 0 0 0 4px #c0a17a}
+.square.legal::before{background:#c4a77abc}
+.square.capture::before{border-color:#c4a77a;background:transparent}
+.square.lastmove{box-shadow:inset 0 0 0 4px #a7b4987d}
+.square.check{box-shadow:inset 0 0 0 5px #b36c5a}
+.sprite{border-color:#b3bbb2;background:linear-gradient(#a7b3ad,#637872)}
+.sprite.enemy{border-color:#b99889;background:linear-gradient(#926b65,#563f3d)}
+.sprite.king{outline-color:#bba07c}
+.pill.gold{border-color:#a88865;color:#c3a487}
+.modal-card{background:#111b20;border-color:#7a6b59}
+@media(max-width:780px){header h1{font-size:17px;letter-spacing:.015em}}
+@media (orientation:landscape) and (max-height:600px){#boardPanel .board-shell{width:min(calc(100dvh - 110px),100%)} #controlsPanel{height:100%;max-height:100%}}
 </style>
 </head>
 <body>
 <header>
-  <div><p>AGDG · A game inside the game · Experimental build 0.1</p><h1>THE <span>RAIDER</span> SKIRMISH</h1></div>
+  <div><p>THE SETTLEMENT CHRONICLE / PROTOTYPE 0.5a</p><h1>CHATRAJ<span>NORAK</span></h1></div>
   <div class="top-actions"><button class="btn tiny" id="detailsBtn" type="button" aria-haspopup="dialog">Details</button><button class="btn tiny" id="exportBtn">Export event history</button><button class="btn tiny" id="resetBtn">New campaign</button></div>
 </header>
 <main>
@@ -156,7 +194,8 @@ const SYMBOL={w:{K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙'},b:{K:'♚',Q:'
 const WORTH={P:1,N:3,B:3,R:5,Q:9,K:1000};
 const COST={P:1,N:2,B:2,R:3,Q:4};
 const QUOTAS={P:5,N:2,B:2,R:2,Q:1};
-const SAVE_KEY='agdg-raider-skirmish-v01';
+const SAVE_KEY='chatrajnorak-v05a'; // A separate save slot keeps v0.4 campaigns intact.
+const ENCOUNTERS={westRoad:{id:'west_road',name:'The Western Approach',survivalRule:'escort',minAllies:1,deployGuidance:'If the battle is lost while Our Leader is vulnerable, at least one companion must remain on the board to lead an escape.',firstMoveGuidance:'The scouts confirm it: if the line breaks, one surviving escort can get Our Leader away.'}};
 const names=['Tess','Crow','Nina','Oz','Moss','Pip','Ellis','Dove','Kit','Wren','Sal','Rory','Ash','Bex','Milo','Lux','Dana','Juno','Bo','Cass','Liv','Gus'];
 const places=['the flooded laundromat','the broken bus stop','the free clinic','the last open diner','an overturned library van','a community garden','the west checkpoint'];
 const histories=['They once spent a winter keeping a neighborhood boiler alive.','They lied about their age to get a night shift in a hospital.','They know where the missing school books were hidden.','They learned to play chess using bottle caps and chalk.','They have a sister somewhere beyond the southern fence.','They used to fix bicycles for a living.','They can name every bird that survived the fires.'];
@@ -178,7 +217,7 @@ const initialPool=[
 {id:'start-q1',name:'Mercy',age:'about 39',type:'Q',origin:'the old courthouse',history:'Mercy helped settle disputes when nobody trusted the courts.'}
 ];
 const king={id:'king',name:'The Wanderer',age:'unknown',type:'K',origin:'the highway',history:'Their history is still being written.',xp:0};
-function fresh(){return {phase:'choose',roster:[],scrap:0,wins:0,attempt:1,anteId:null,anteXP:0,pendingAnteId:null,records:[],nextEventId:1,offerNonce:0,moveHistory:[],battle:null,flavor:'',forcedRetry:false};}
+function fresh(){return {phase:'choose',roster:[],scrap:0,wins:0,losses:0,battles:0,mortalSecure:false,encounter:null,lastResult:null,records:[],nextEventId:1,offerNonce:0,moveHistory:[],battle:null,flavor:'',offers:[]};}
 function makeMember(src){return {...src,xp:src.xp||0,missions:src.missions||0};}
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(game));}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d && d.phase && Array.isArray(d.roster))return d;}catch(e){}return null;}
@@ -258,7 +297,7 @@ function chooseStart(id){if(selectedStart.includes(id))selectedStart=selectedSta
 function startCampaign(){if(selectedStart.length<1)return;game.roster=selectedStart.map(id=>makeMember(initialPool.find(x=>x.id===id)));game.phase='campaign';event('party_founded',{members:game.roster.map(u=>({id:u.id,role:u.type}))});render();}
 function enterDialogue(){game.phase='dialogue';game.flavor='start';save();render();}
 function dialogueChoice(which){game.flavor=which;game.phase='dialogue_reply';event('negotiation_failed',{approach:which});render();}
-function beginDeploy(){game.phase='deploy';deploy={};kingPos={r:7,c:4};selectedUnit=null;selectedCell=null;current=null;pendingPromotion=null;game.battle=null;game.moveHistory=[];if(!game.anteId)game.pendingAnteId=null;save();render();}
+function beginDeploy(){game.phase='deploy';game.encounter={...ENCOUNTERS.westRoad,number:game.battles+1};deploy={};kingPos={r:7,c:4};selectedUnit=null;selectedCell=null;current=null;pendingPromotion=null;game.battle=null;game.moveHistory=[];save();render();}
 // Deployment is not a chess move. Any piece may start on either home rank.
 // Special moves are still checked later by the existing chess-rules engine.
 function canDeploy(u,r,c){return !!u&&(r===6||r===7);}
@@ -288,23 +327,13 @@ function reveal(){
     ann(message);doc('boardHelp').textContent=message;return;
   }
   current=candidate;game.battle=current;game.phase='reveal';
-  event('formation_revealed',{kingSquare:sq(kingPos.r,kingPos.c),deployment:Object.entries(deploy).map(([id,s])=>({id,square:sq(s.r,s.c)})),attempt:game.attempt});render();
+  event('formation_revealed',{kingSquare:sq(kingPos.r,kingPos.c),deployment:Object.entries(deploy).map(([id,s])=>({id,square:sq(s.r,s.c)})),encounter:game.encounter?.id});render();
 }
-// Selecting an ante is reversible until Begin Skirmish commits it.
-function chooseAnte(id){
-  if(game.anteId)return;
-  if(!game.roster.some(u=>u.id===id))return;
-  game.pendingAnteId=game.pendingAnteId===id?null:id;
-  render();
-}
+// Deployment is committed when skirmish begins. No wagers and no retries.
 function startFight(){
-  if(!game.anteId){
-    const chosen=game.roster.find(u=>u.id===game.pendingAnteId);
-    if(!chosen)return;
-    game.anteId=chosen.id;game.anteXP=chosen.xp;game.pendingAnteId=null;
-    event('ante_locked',{companion:chosen.id,xp:chosen.xp});
-  }
-  game.phase='battle';game.battle=current;current.counts=current.counts||{[hash(current)]:1};save();render();ann('Your move. Select a survivor, then a highlighted square.');
+  game.phase='battle';game.battle=current;
+  current.counts=current.counts||{[hash(current)]:1};
+  save();render();ann('Your move. Select a survivor, then a highlighted square.');
 }
 function sq(r,c){return 'abcdefgh'[c]+(8-r);}
 function moveStr(m){return sq(m.r,m.c)+'→'+sq(m.tr,m.tc)+(m.promotion?'='+m.promotion:'')+(m.special==='castleK'?' (O-O)':m.special==='castleQ'?' (O-O-O)':m.special==='enpassant'?' (en passant)':'');}
@@ -323,8 +352,8 @@ function performMove(m,side){const moving=current.board[m.r][m.c],next=apply(cur
   if(m.promotion)event('pawn_promoted_in_battle',{side,actor:moving.id,role:m.promotion});
   selectedCell=null;legalForCell=[];game.battle=current;save();render();
   const moves=legal(current.board,current,current.turn);
-  if(!moves.length&&inCheck(current.board,current.turn)){if(current.turn==='b')win();else loseAttempt('checkmate');return;}
-  const drawn=drawCause(current);if(drawn){game.phase='draw';game.flavor=drawn;event('encounter_drawn',{reason:drawn});render();return;}
+  if(!moves.length&&inCheck(current.board,current.turn)){if(current.turn==='b')win();else resolveBattle('defeat','checkmate');return;}
+  const drawn=drawCause(current);if(drawn){resolveBattle('draw',drawn);return;}
   if(side==='w'){
     aiThinking=true;doc('boardHelp').textContent='The raiders are considering their move…';
     setTimeout(()=>{if(game.phase==='battle'){const reply=chooseEnemyMove();aiThinking=false;if(reply)performMove(reply,'b');else render();}else aiThinking=false;},220);
@@ -346,21 +375,49 @@ function chooseEnemyMove(){const moves=legal(current.board,current,'b');if(!move
     if(score>bestScore){bestScore=score;best=m;}
   }return best;
 }
-function loseAttempt(reason){game.attempt++;event('king_checkmated',{attempt:game.attempt-1,reason});lastReport='Your King was checkmated. The encounter resets; casualties from this attempt return.';
-  if(game.attempt>3){const u=game.roster.find(x=>x.id===game.anteId);game.roster=game.roster.filter(x=>x.id!==game.anteId);event('ante_forfeited',{id:game.anteId,role:u?.type,xp:u?.xp});game.anteId=null;game.anteXP=0;game.attempt=1;game.phase='campaign';game.flavor='forfeit';deploy={};
-  }else{game.phase='retry';deploy={};}save();render();}
-function concede(){if(game.phase!=='battle')return;if(confirm('Count this as a failed attempt? Your wager remains at risk.'))loseAttempt('conceded');}
-function win(){const alive=new Map();for(const row of current.board)for(const p of row)if(p?.side==='w')alive.set(p.id,p);
-  const killed=game.roster.filter(u=>Object.hasOwn(deploy,u.id)&&!alive.has(u.id));
-  game.roster=game.roster.filter(u=>!killed.some(k=>k.id===u.id));
-  for(const u of game.roster){const soldier=alive.get(u.id);if(!soldier)continue;if(Object.hasOwn(deploy,u.id)){
-      u.xp++;u.missions++;if(soldier.type!==u.type){const old=u.type;u.type=soldier.type;event('promotion_persisted',{id:u.id,from:old,to:u.type});}
-    }}
-  for(const u of killed)event('permanent_death',{id:u.id,role:u.type,encounter:'raider skirmish'});
-  game.scrap+=3;game.wins++;game.phase='victory';game.flavor='victory';game.attempt=1;
-  event('raid_defeated',{survivors:[...alive.keys()],casualties:killed.map(u=>u.id),scrapAward:3});
-  generateOffers(game.anteXP);game.anteId=null;game.anteXP=0;save();render();
+function survivalMet(board,encounter){
+  if(encounter?.survivalRule==='escort'){
+    const allies=board.flat().filter(p=>p?.side==='w'&&p.type!=='K').length;
+    return allies>=(encounter.minAllies||1);
+  }
+  throw new Error('Encounter has no authored survival rule.');
 }
+function resolveBattle(result,reason){
+  const live=game.roster.filter(u=>Object.hasOwn(deploy,u.id)&&current.board.some(row=>row.some(p=>p?.side==='w'&&p.id===u.id)));
+  const casualties=game.roster.filter(u=>Object.hasOwn(deploy,u.id)&&!live.some(v=>v.id===u.id));
+  const friendlyRemaining=current.board.flat().filter(p=>p?.side==='w'&&p.type!=='K').length;
+  const enemyRemaining=current.board.flat().filter(p=>p?.side==='b').length;
+  const before=game.mortalSecure;
+  // The first defeat can be fatal: mortal security is earned, never gifted.
+  const leaderSurvived=result!=='defeat'||before||survivalMet(current.board,game.encounter);
+  game.roster=game.roster.filter(u=>!casualties.some(k=>k.id===u.id));
+  for(const u of live){
+    const soldier=current.board.flat().find(p=>p?.side==='w'&&p.id===u.id);
+    const saved=game.roster.find(x=>x.id===u.id);
+    if(result==='victory'&&saved){saved.xp++;saved.missions++;}
+    if(saved&&soldier&&soldier.type!==saved.type){const old=saved.type;saved.type=soldier.type;event('promotion_persisted',{id:saved.id,from:old,to:saved.type});}
+  }
+  for(const u of casualties)event('companion_removed',{id:u.id,role:u.type,encounter:game.encounter?.id,disposition:'capture_or_death_undetermined'});
+  if(result==='victory'){
+    game.wins++;game.scrap+=3;game.mortalSecure=true;
+  }else if(result==='defeat'){
+    game.losses++;game.mortalSecure=false;
+  }
+  game.battles++;
+  game.lastResult={result,reason,encounter:game.encounter?.name||'Encounter',casualties:casualties.map(u=>u.name),friendlyRemaining,enemyRemaining,leaderSurvived,secureBefore:before,secureAfter:game.mortalSecure,plies:current.ply||0,turns:Math.ceil((current.ply||0)/2)};
+  // History only records the decisive outcome. Individual chess moves remain telemetry.
+  event('battle_resolved',{...game.lastResult,encounterId:game.encounter?.id,battleNumber:game.battles,casualtyIds:casualties.map(u=>u.id)});
+  if(result==='victory'){
+    game.phase='victory';game.flavor='won';generateOffers(0); // Legacy recruitment; redesign follows in v0.5b.
+  }else if(result==='draw'){
+    game.phase='draw';game.flavor='drawn';
+  }else{
+    game.phase=leaderSurvived?'defeat':'campaign_over';game.flavor=leaderSurvived?'defeated':'leader_died';
+  }
+  game.battle=current;lastReport=result==='victory'?'The settlement survived the encounter.':result==='draw'?'The battle ended without checkmate.':'The settlement suffered a decisive defeat.';
+  save();render();
+}
+function win(){resolveBattle('victory','checkmate');}
 function nextMember(type){const seed=game.offerNonce++;return makeMember({id:'recruit-'+Date.now()+'-'+seed,type,name:names[seed%names.length],age:'about '+(18+(seed*7)%51),origin:places[(seed+2)%places.length],history:histories[(seed+4)%histories.length]});}
 function rollPower(xp){const chance=Math.min(.82,.20+xp*.10);if(Math.random()<chance){const pool=xp>=4?['N','B','R','Q']:xp>=2?['N','B','R']:['N','B'];return pool[Math.floor(Math.random()*pool.length)];}return 'P';}
 function generateOffers(xp){offers=[nextMember('P'),nextMember(rollPower(xp)),nextMember(rollPower(xp))];game.offers=offers;game.offerXP=xp;save();}
@@ -368,24 +425,23 @@ function recruit(id){const unit=(game.offers||[]).find(u=>u.id===id);if(!unit)re
   game.scrap-=COST[unit.type];game.roster.push(unit);game.offers=game.offers.filter(u=>u.id!==id);
   event('survivor_recruited',{id:unit.id,role:unit.type,cost:COST[unit.type],from:'raider aftermath'});render();
 }
-function finishVictory(){game.phase='campaign';game.flavor='won';game.offers=[];deploy={};kingPos={r:7,c:4};current=null;save();render();}
-function retryStart(){game.phase='deploy';deploy={};kingPos={r:7,c:4};current=null;selectedUnit=null;selectedCell=null;save();render();}
-function drawRetry(){game.phase='deploy';deploy={};kingPos={r:7,c:4};current=null;selectedUnit=null;selectedCell=null;save();render();}
+function returnToCamp(){game.phase='campaign';game.flavor=game.lastResult?.result||'';game.offers=[];deploy={};kingPos={r:7,c:4};current=null;game.battle=null;selectedUnit=null;selectedCell=null;save();render();}
 function beginAgain(){if(!confirm('Erase this campaign and start with a new party? This cannot be undone.'))return;localStorage.removeItem(SAVE_KEY);selectedStart=[];deploy={};kingPos={r:7,c:4};current=null;lastMove=null;game=fresh();render();}
-function downloadEvents(){const lines=game.records.map(r=>JSON.stringify(r)).join('\n')+'\n';const blob=new Blob([lines],{type:'application/x-ndjson;charset=utf-8'}),url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='agdg-raider-history.jsonl';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function downloadEvents(){const lines=game.records.map(r=>JSON.stringify(r)).join('\n')+'\n';const blob=new Blob([lines],{type:'application/x-ndjson;charset=utf-8'}),url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='chatrajnorak-events-v05a.jsonl';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function playerText(p){if(!p)return '';return `<b>${p.name}</b><small>${TYPES[p.type]} · ${p.age} · met at ${p.origin}</small>`;}
 function renderStory(){let h='';
  switch(game.phase){
- case 'choose':h=`<div class="eyebrow">New campaign · the last decent road</div><h2>Who walks with you?</h2><p>You're the King. Choose <strong>1–5</strong> starting companions for free. The first encounter is a skirmish with raiders who take their aesthetics considerably more seriously than their ethics.</p><div class="narrative">“The world ended and some people still found time to invent a dress code.”</div><p class="muted small">Starting caps: 5 Pawns · 2 Knights · 2 Bishops · 2 Rooks · 1 Queen. These are selection caps, not a power-point budget.</p>`;break;
- case 'campaign':h=`<div class="eyebrow">Campaign · crossroads settlement</div><h2>${game.flavor==='forfeit'?'The wager was lost.':game.wins?'A little safer, for now.':'The road is blocked.'}</h2><p>${game.flavor==='forfeit'?'You return without the companion you pledged. The raiders are still there.':game.wins?'News travels: the raiders learned the value of humility. Their friends may not have.':'A group of self-appointed wasteland royalty is harassing travelers at the west road. Someone has to speak to them.'}</p><div class="narrative">“Survival rule number one,” says a neighbor. “Never trust anybody with a skull painted on a skull.”</div>`;break;
- case 'dialogue':h=`<div class="eyebrow">Scene 01 · diplomacy</div><h2>The Brotherhood of the Final Shadow</h2><p>A raider wearing twelve belts steps forward. Their leader points at your group.</p><div class="narrative"><strong>Raider:</strong> “You stand before the Void Regent's Eternal Tribunal of Blood.”<br><strong>King:</strong> “Is that the homeowners' association?”<br><strong>Raider:</strong> “...No.”</div><p>They're armed, nervous, and clearly younger than the name suggests.</p>`;break;
- case 'dialogue_reply':h=`<div class="eyebrow">Negotiations · concluded badly</div><h2>Diplomacy was attempted.</h2><div class="narrative"><strong>King:</strong> “${game.flavor==='peace'?'You can keep the road open and we can trade food. Everybody gets home.':'Who made those costumes? Your grandmother? Because the stitching is pretty good.'}”<br><strong>Raider:</strong> “We appreciate the ${game.flavor==='peace'?'offer':'constructive feedback'}, but the Void Tribunal demands tribute.”<br><strong>King:</strong> “Of course it does.”</div><p>The raiders take their positions. You must checkmate their King to clear the road.</p>`;break;
- case 'deploy':h=`<div class="eyebrow">Stage 1 · deploy blind · attempt ${game.attempt}/3</div><h2>Put your people where you need them.</h2><p>Choose survivors and deploy on either home rank. <strong>You may move your King and deploy Pawns on rank 1.</strong> Traditional starting squares preserve eligible special moves. Enemy positions stay hidden until you commit the formation.</p><div class="hint">${game.anteId?'Your existing ante stays locked for the remaining attempts.':'You will inspect the enemy formation before choosing your ante.'} ${game.attempt>1?'The enemy starts exactly where you saw them last time.': ''}</div>`;break;
- case 'reveal':h=`<div class="eyebrow">Stage 2 · enemy revealed · attempt ${game.attempt}/3</div><h2>The mask collection advances.</h2><p>Study their position. The King in the north is your checkmate target. ${game.anteId?'Your previous wager is locked.':'Choose one companion as your ante. Three checkmates against your King will forfeit that companion.'}</p><div class="hint">Both sides obey traditional chess rules. One move per turn, castling, en passant, check, checkmate, promotion and draws are enforced.</div>`;break;
- case 'battle':h=`<div class="eyebrow">Stage 3 · fight · attempt ${game.attempt}/3</div><h2>${current?.turn==='w'?'Your turn.':'The raiders move.'}</h2><p>Tap or click a survivor, then a highlighted destination. Yellow rings show legal moves. Checkmate their King. If you win, any companions captured on the way remain dead.</p><div class="statrow"><span class="pill">Ante: ${game.roster.find(u=>u.id===game.anteId)?.name||'—'}</span><span class="pill">${game.attempt}/3 attempts</span><span class="pill">${current?.ply||0} half-moves</span></div>`;break;
- case 'retry':h=`<div class="eyebrow">King checkmated · attempt ${game.attempt-1}/3 failed</div><h2>Death is an expensive tutor.</h2><p>The encounter resets. Every companion captured during that failed attempt is restored. You can rearrange your formation using what you've learned.</p><div class="narrative">“I have some notes,” says the King, who is technically dead for the second time this afternoon.</div><p>Your ante remains <strong>${game.roster.find(u=>u.id===game.anteId)?.name}</strong>. ${4-game.attempt} attempt${4-game.attempt===1?'':'s'} remain.</p>`;break;
- case 'draw':h=`<div class="eyebrow">Deadlock · ${game.flavor}</div><h2>Nobody won. Nobody got home.</h2><p>Chess draws are real. Checkmate remains required. You may redeploy and retry this position; a draw doesn't count as one of your King's three deaths.</p>`;break;
- case 'victory':h=`<div class="eyebrow">Checkmate · skirmish survived</div><h2>The Void Tribunal has adjourned.</h2><div class="narrative"><strong>Raider:</strong> “This isn't over.”<br><strong>King:</strong> “It would be a lot more over if you helped us clear the road.”<br><strong>Raider:</strong> “...Do you have soup?”</div><p>+3 scrap. Survivors gain experience and reveal fragments of their histories. Battle casualties remain permanent. Recruit someone if you can afford them.</p>`;break;
+ case 'choose':h=`<div class="eyebrow">The settlement chronicle · beginning</div><h2>Who walks with Our Leader?</h2><p>Choose 1–5 starting companions. Every battle is decisive, and the campaign begins without mortal security.</p><div class="narrative">“The world ended. We did not.”</div>`;break;
+ case 'campaign':h=`<div class="eyebrow">The settlement · ${game.battles} recorded battles</div><h2>${game.lastResult?.result==='defeat'?'After the defeat':game.wins?'Still standing':'The western road'}</h2><p>${game.roster.length?'The raiders remain a threat to travelers. You can assemble your next defense.':'No companions remain available. Recruitment after a defeat is not implemented in this prototype; this campaign cannot launch another battle yet.'}</p><div class="hint">Our Leader: ${game.mortalSecure?'SECURE · one defeat can be survived':'VULNERABLE · checkmate may be fatal'}. ${game.wins} victories · ${game.losses} defeats.</div>`;break;
+ case 'dialogue':h=`<div class="eyebrow">Scene · the western approach</div><h2>The Brotherhood of the Final Shadow</h2><p>A raider wearing twelve belts steps forward. Their leader points at your group.</p><div class="narrative"><strong>Raider:</strong> “You stand before the Void Regent's Eternal Tribunal of Blood.”</div>`;break;
+ case 'dialogue_reply':h=`<div class="eyebrow">Negotiations · failed</div><h2>The road remains contested.</h2><p>The raiders refuse to open the road. Deploy your defenders and prepare for a decisive battle.</p>`;break;
+ case 'deploy':h=`<div class="eyebrow">Deployment · ${game.encounter?.name||'Western Approach'}</div><h2>Every position matters.</h2><p>Place Our Leader and companions on either home rank. Moving the King and Pawns during deployment is allowed; normal special-move requirements apply.</p><div class="hint"><strong>Survival briefing:</strong> ${game.encounter?.deployGuidance}</div><p>Our Leader is currently <strong>${game.mortalSecure?'secure':'vulnerable'}</strong>. Formation and casualties are irreversible once combat ends.</p>`;break;
+ case 'reveal':h=`<div class="eyebrow">Enemy formation revealed</div><h2>The road is blocked.</h2><p>Study their positions before committing to battle. No wagers. No retries.</p><div class="hint"><strong>Survival briefing:</strong> ${game.encounter?.deployGuidance}</div>`;break;
+ case 'battle':h=`<div class="eyebrow">Battle ${game.battles+1} · no retries</div><h2>${current?.turn==='w'?'Our move.':'The raiders respond.'}</h2><p>Checkmate decides the battle. Companion casualties will persist regardless of the result.</p><div class="hint">${(current?.ply||0)>=1?game.encounter?.firstMoveGuidance:game.encounter?.deployGuidance}</div>`;break;
+ case 'defeat':h=`<div class="eyebrow">Recorded defeat · Our Leader survived</div><h2>The road is not ours.</h2><p>The chronicle records the defeat and ${game.lastResult?.casualties.length||0} lost companions. Mortal security is gone.</p><div class="narrative">${game.lastResult?.secureBefore?'Our Leader escapes this defeat, but cannot rely on such protection again.':'A surviving companion finds a way through the raiders and leads Our Leader out.'}</div>`;break;
+ case 'campaign_over':h=`<div class="eyebrow">The Chronicle concludes</div><h2>Our Leader has fallen.</h2><p>The final formation left no viable escape. The campaign ends in battle ${game.battles}.</p><div class="narrative">What was built is now part of the world's history.</div>`;break;
+ case 'draw':h=`<div class="eyebrow">Decisive deadlock · ${game.lastResult?.reason}</div><h2>No side prevailed.</h2><p>The draw becomes history. Captured companions remain lost; Our Leader's security is unchanged. Draw aftermath is provisional pending future design.</p>`;break;
+ case 'victory':h=`<div class="eyebrow">Recorded victory · our people endured</div><h2>The Western Approach holds.</h2><p>Our Leader earned mortal security. ${game.lastResult?.casualties.length||0} companions lost. +3 scrap.</p><div class="hint">Temporary v0.4 recruitment remains active until the separate v0.5b reputation-driven recruitment update.</div>`;break;
  }
  doc('story').innerHTML=h;
 }
@@ -400,34 +456,36 @@ function listPage(items,makeButton){
 function actionButtons(...buttons){return `<div class="actionrow">${buttons.join('')}</div>`;}
 function cmdTitle(title,hint=''){return `<div class="cmd-head"><h2>${title}</h2></div>${hint?`<p class="cmd-hint">${hint}</p>`:''}`;}
 function controlsHTML(){switch(game.phase){
-  case 'choose':return cmdTitle(`Choose survivors · ${selectedStart.length}/5`,'Select 1–5 companions. Use Next to see more.')+
+  case 'choose':return cmdTitle(`Choose survivors · ${selectedStart.length}/5`,'Select 1–5 companions. Use Next for more.')+
     listPage(initialPool,u=>`<button class="person ${selectedStart.includes(u.id)?'sel':''}" data-start="${u.id}" aria-pressed="${selectedStart.includes(u.id)}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail">${playerText(u)}</span></button>`)+
-    actionButtons(`<button class="btn primary" id="begin" ${selectedStart.length?'':'disabled'}>Start campaign →</button>`);
-  case 'campaign':return cmdTitle('Crossroads',`Party: ${game.roster.length} survivor${game.roster.length===1?'':'s'}.`)+
-    `<p class="cmd-narrative">${game.flavor==='forfeit'?'The wager was lost. The road remains dangerous.':game.wins?'The raiders retreated. Another patrol waits ahead.':'Raiders block the west road. Decide how to approach.'}</p>`+
+    actionButtons(`<button class="btn primary" id="begin" ${selectedStart.length?'':'disabled'}>Start chronicle →</button>`);
+  case 'campaign':return cmdTitle(`Settlement · ${game.mortalSecure?'SECURE':'VULNERABLE'}`,`${game.wins}W / ${game.losses}L`)+
+    `<p class="cmd-narrative">${game.roster.length?'The western road remains contested. Prepare for another encounter.':'No defenders remain. The next settlement/recruitment system is not yet implemented.'}</p>`+
     actionButtons(`<button class="btn primary" id="goRaid" ${game.roster.length?'':'disabled'}>Approach the raiders →</button>`);
   case 'dialogue':return cmdTitle('Speak to the raiders')+`<p class="cmd-narrative">The Brotherhood of the Final Shadow demands tribute. What do you say?</p>`+
     actionButtons('<button class="btn primary" data-talk="peace">Offer food and passage</button>','<button class="btn" data-talk="costume">Compliment costumes</button>');
-  case 'dialogue_reply':return cmdTitle('Negotiations failed')+`<p class="cmd-narrative">The raiders refused. Prepare your companions for chess combat.</p>`+
+  case 'dialogue_reply':return cmdTitle('Negotiations failed')+`<p class="cmd-narrative">The raiders refuse. Prepare your defenders.</p>`+
     actionButtons('<button class="btn primary" id="toDeploy">Prepare the party →</button>');
-  case 'deploy':return cmdTitle(`Deploy · ${Object.keys(deploy).length} placed`,'Select a unit, then a square on rank 1 or 2. King may move too.')+
+  case 'deploy':return cmdTitle(`Deploy · keep 1 ally alive`,'Survival: keep ≥1 companion standing if checkmated while vulnerable.')+
     listPage([king,...game.roster],u=>`<button class="person ${selectedUnit===u.id?'sel':''} ${u.id==='king'||deploy[u.id]?'placed':''}" data-deploy="${u.id}" aria-pressed="${selectedUnit===u.id}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${u.id==='king'?' · '+sq(kingPos.r,kingPos.c):deploy[u.id]?' · '+sq(deploy[u.id].r,deploy[u.id].c):''}</b><small>${TYPES[u.type]}${u.id==='king'?' · mandatory':' · '+u.xp+' XP'}</small></span></button>`)+
     actionButtons('<button class="btn" id="autoDeploy">Auto-arrange</button>',`<button class="btn primary" id="toReveal" ${Object.keys(deploy).length?'':'disabled'}>Reveal enemy →</button>`);
-  case 'reveal':return cmdTitle(game.anteId?'Wager locked':'Choose an ante',game.anteId?'Locked across all attempts.':'Tap to select; tap again to cancel or choose someone else. Locked when battle starts.')+
-    listPage(game.roster,u=>`<button class="person ${game.anteId===u.id||game.pendingAnteId===u.id?'sel':''}" data-ante="${u.id}" ${game.anteId?'disabled':''} aria-pressed="${game.anteId===u.id||game.pendingAnteId===u.id}"><span class="glyph">${SYMBOL.w[u.type]}</span><span class="detail"><b>${u.name}${game.anteId===u.id?' · LOCKED':game.pendingAnteId===u.id?' · SELECTED':''}</b><small>${TYPES[u.type]} · ${u.xp} XP</small></span></button>`)+
-    actionButtons(`<button class="btn primary" id="toBattle" ${game.anteId||game.pendingAnteId?'':'disabled'}>Begin skirmish →</button>`);
-  case 'battle':return cmdTitle(current?.turn==='w'?'Your move':'Raiders moving…',`Attempt ${game.attempt}/3 · Tap a piece, then its destination.`)+
-    `<p class="cmd-narrative">${game.moveHistory.slice(-2).join(' · ')||'The battlefield is ready. Select your first move.'}</p>`+
-    actionButtons('<button class="btn danger" id="giveUp">Concede this attempt</button>');
-  case 'retry':return cmdTitle('Checkmate · attempt failed')+
-    `<p class="cmd-narrative">Your companion ante stays at risk. Re-arrange your team and adapt to what you learned.</p>`+
-    actionButtons('<button class="btn primary" id="retryBtn">Rearrange and retry →</button>');
-  case 'draw':return cmdTitle(`Deadlock · ${game.flavor}`)+
-    `<p class="cmd-narrative">A draw does not use up an attempt. Checkmate is required to win.</p>`+
-    actionButtons('<button class="btn primary" id="drawRetry">Redeploy →</button>');
-  case 'victory':return cmdTitle(`Victory · ${game.scrap} scrap`,'Recruit survivors or return to camp.')+
+  case 'reveal':return cmdTitle('Formation revealed','Our Leader can escape defeat if ≥1 companion survives.')+
+    `<p class="cmd-narrative">${game.encounter?.deployGuidance}</p>`+
+    actionButtons('<button class="btn primary" id="toBattle">Begin skirmish →</button>');
+  case 'battle':return cmdTitle(`${game.mortalSecure?'SECURE':'VULNERABLE'} · ${current?.turn==='w'?'Your move':'Raiders move'}`,`Battle ${game.battles+1}`)+
+    `<p class="cmd-narrative">${(current?.ply||0)>=1?game.encounter?.firstMoveGuidance:game.moveHistory.slice(-2).join(' · ')||'Choose your first move.'}</p>`;
+  case 'defeat':return cmdTitle('Defeat · Our Leader survives')+
+    `<p class="cmd-narrative">${game.lastResult?.casualties.length||0} companions lost. Security is gone. The final board is preserved for review.</p>`+
+    actionButtons('<button class="btn primary" id="returnCamp">Return to settlement →</button>');
+  case 'campaign_over':return cmdTitle('Our Leader has fallen')+
+    `<p class="cmd-narrative">Campaign ended. Review the final board or the Chronicle in Details.</p>`+
+    actionButtons('<button class="btn primary" id="newCampaign">New campaign →</button>');
+  case 'draw':return cmdTitle(`Deadlock · ${game.lastResult?.reason}`)+
+    `<p class="cmd-narrative">Draw recorded. Lost companions stay lost; security remains unchanged.</p>`+
+    actionButtons('<button class="btn primary" id="returnCamp">Return to settlement →</button>');
+  case 'victory':return cmdTitle(`Victory · ${game.scrap} scrap`,'Temporary recruitment: v0.5b will replace purchases.')+
     `<div class="offer-container">${(game.offers||[]).map(u=>`<div class="offerline"><div><b>${SYMBOL.w[u.type]} ${u.name} · ${TYPES[u.type]}</b><small>${u.age} · ${u.origin}</small></div><button class="btn tiny" data-recruit="${u.id}" ${game.scrap>=COST[u.type]?'':'disabled'}>Recruit · ${COST[u.type]}</button></div>`).join('')||'<p>Recruitment complete.</p>'}</div>`+
-    actionButtons('<button class="btn primary" id="complete">Return to camp →</button>');
+    actionButtons('<button class="btn primary" id="returnCamp">Return to settlement →</button>');
   default:return '';
 }}
 
@@ -436,11 +494,10 @@ function renderControls(){doc('controls').innerHTML=controlsHTML();const on=(id,
   doc('controls').querySelectorAll('[data-start]').forEach(el=>el.onclick=()=>chooseStart(el.dataset.start));
   doc('controls').querySelectorAll('[data-talk]').forEach(el=>el.onclick=()=>dialogueChoice(el.dataset.talk));
   doc('controls').querySelectorAll('[data-deploy]').forEach(el=>el.onclick=()=>{selectedUnit=el.dataset.deploy;render();});
-  doc('controls').querySelectorAll('[data-ante]').forEach(el=>el.onclick=()=>chooseAnte(el.dataset.ante));
   doc('controls').querySelectorAll('[data-recruit]').forEach(el=>el.onclick=()=>recruit(el.dataset.recruit));
-  on('begin',startCampaign);on('goRaid',enterDialogue);on('toDeploy',beginDeploy);on('autoDeploy',autoDeploy);on('toReveal',reveal);on('toBattle',startFight);on('giveUp',concede);on('retryBtn',retryStart);on('drawRetry',drawRetry);on('complete',finishVictory);
+  on('begin',startCampaign);on('goRaid',enterDialogue);on('toDeploy',beginDeploy);on('autoDeploy',autoDeploy);on('toReveal',reveal);on('toBattle',startFight);on('returnCamp',returnToCamp);on('newCampaign',beginAgain);
 }
-function renderBoard(){const defeated=game.phase==='retry'||(game.phase==='campaign'&&game.flavor==='forfeit');
+function renderBoard(){const defeated=game.phase==='defeat'||game.phase==='campaign_over';
  const b=game.phase==='battle'||game.phase==='reveal'||game.phase==='victory'||game.phase==='draw'||defeated?current?.board:game.phase==='deploy'?deployBoard():null;
  doc('boardPanel').classList.toggle('is-defeated',defeated&&!!b);
  const board=doc('board');let html='';const allowed=legalForCell;for(let r=0;r<8;r++)for(let c=0;c<8;c++){
@@ -450,16 +507,16 @@ function renderBoard(){const defeated=game.phase==='retry'||(game.phase==='campa
   html+=`<button type="button" class="square ${(r+c)%2?'dark':'light'} ruined ${home?'validhome':''} ${sel?'focused':''} ${legalDest?'legal':''} ${legalDest&&p?'capture':''} ${lm?'lastmove':''} ${check?'check':''}" data-r="${r}" data-c="${c}" aria-label="${label}" aria-pressed="${!!sel}" title="${label}">${p?`<span class="sprite ${side==='b'?'enemy':''} ${p.type==='K'?'king':''}"><span class="head" aria-hidden="true">${side==='b'?'☠':'♟'}</span><span class="role" aria-hidden="true">${SYMBOL[side][p.type]}</span></span>`:''}<span class="coords" aria-hidden="true">${sq(r,c)}</span></button>`;
  }
  board.innerHTML=html;board.querySelectorAll('.square').forEach(el=>el.onclick=()=>{const r=Number(el.dataset.r),c=Number(el.dataset.c);if(game.phase==='deploy')clickDeploy(r,c);else if(game.phase==='battle')clickBattle(r,c);});
- let note='';if(defeated&&b)note='Final position — inspect the board, then continue.';else if(game.phase==='deploy')note='Gold outlines = home ranks. King and Pawns may start on either rank.';
+ let note='';if(defeated&&b)note='Final position — inspect the board, then continue.';else if(game.phase==='deploy')note='ESCAPE RULE: keep at least 1 companion alive if checkmated.';
  else if(game.phase==='battle')note='Select a survivor → choose a highlighted destination. Tap/click on either device.';
- else if(game.phase==='reveal')note='The enemy is revealed. Choose your wager in the panel.';
+ else if(game.phase==='reveal')note='The enemy is revealed. This battle is decisive.';
  else if(b)note='Chess battlefield · 8 × 8 · top = raiders, bottom = survivors';else note='A standard 8 × 8 battlefield awaits your survivors.';
  doc('boardHelp').textContent=note;
 }
 function deployBoard(){const b=emptyBoard();b[kingPos.r][kingPos.c]=mkr('w','K','king');for(const [id,pos] of Object.entries(deploy)){const u=game.roster.find(u=>u.id===id);if(u)b[pos.r][pos.c]=mkr('w',u.type,id);}return b;}
-function renderStats(){const wager=game.roster.find(u=>u.id===game.anteId);doc('stats').innerHTML=`<div class="statrow"><span class="pill gold">${game.scrap} scrap</span><span class="pill">${game.roster.length} companions</span><span class="pill">${game.wins} wins</span><span class="pill">${game.attempt}/3 attempt</span></div><p class="small muted" style="margin-top:10px">Current wager: ${wager?`${wager.name}, ${TYPES[wager.type]} (${wager.xp} XP)`:'none'}.</p><p class="small muted">Only checkmate wins. The King follows strict check rules. A successful battle makes companion casualties permanent.</p>`;}
+function renderStats(){doc('stats').innerHTML=`<div class="statrow"><span class="pill gold">${game.scrap} scrap</span><span class="pill">${game.roster.length} companions</span><span class="pill">${game.wins} wins</span><span class="pill">${game.losses} losses</span><span class="pill">${game.mortalSecure?'SECURE':'VULNERABLE'}</span></div><p class="small muted" style="margin-top:10px">No wagers or retries. Every battle enters the Chronicle. Our Leader begins vulnerable and earns security through victory.</p>`;}
 function renderRoster(){doc('roster').innerHTML=game.roster.length?game.roster.map(u=>`<div class="offerline"><div><b>${SYMBOL.w[u.type]} ${u.name} <span class="pill">${u.xp} XP</span></b><small>${TYPES[u.type]} · ${u.age} · ${u.origin}</small>${u.xp>=1?`<small class="success">Story: ${u.history}</small>`:''}${u.xp>=3?`<small class="success">Present: Survived ${u.missions} battles with the settlement.</small>`:''}</div></div>`).join(''):'<p class="small muted">No companions yet.</p>';}
-function renderEvents(){doc('events').innerHTML=game.records.slice(-9).reverse().map(r=>`<p><time>#${r.id}</time>${r.type.replaceAll('_',' ')}${r.id===game.records.at(-1)?.id?' <span class="highlight">• latest</span>':''}</p>`).join('')||'<p>History begins when you assemble your party.</p>';}
+function renderEvents(){const history=game.records.filter(r=>r.type==='battle_resolved'||r.type==='party_founded');doc('events').innerHTML=history.slice(-12).reverse().map(r=>r.type==='party_founded'?`<p><time>#${r.id}</time>The settlement's first defenders gathered.</p>`:`<p><time>#${r.id}</time><b>${r.encounter}:</b> ${r.result.toUpperCase()} · ${r.casualties.length} companions lost · ${r.leaderSurvived?'Our Leader survived':'Our Leader fell'} · ${r.turns} turns</p>`).join('')||'<p>History begins when you assemble your party.</p>';}
 function render(){document.body.dataset.phase=game.phase;if(previousPhase!==game.phase){selectionPage=0;previousPhase=game.phase;}renderStory();renderControls();renderBoard();renderStats();renderRoster();renderEvents();save();}
  function showDetails(){
    doc('detailsBody').innerHTML=`<section class="details-section">${doc('story').innerHTML}</section><section class="details-section"><h3>Campaign state</h3>${doc('stats').innerHTML}</section><section class="details-section"><h3>Survivor records</h3>${doc('roster').innerHTML}</section><section class="details-section"><h3>What the world remembers</h3>${doc('events').innerHTML}</section>`;
@@ -474,9 +531,9 @@ function render(){document.body.dataset.phase=game.phase;if(previousPhase!==game
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!doc('detailsModal').hidden)closeDetails();});
  doc('exportBtn').onclick=downloadEvents;doc('resetBtn').onclick=beginAgain;
 doc('board').addEventListener('keydown',e=>{if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const node=e.target.closest('.square');if(!node)return;e.preventDefault();let r=Number(node.dataset.r),c=Number(node.dataset.c);if(e.key==='ArrowUp')r=Math.max(0,r-1);if(e.key==='ArrowDown')r=Math.min(7,r+1);if(e.key==='ArrowLeft')c=Math.max(0,c-1);if(e.key==='ArrowRight')c=Math.min(7,c+1);if(e.key==='Home')c=0;if(e.key==='End')c=7;doc('board').querySelector(`[data-r="${r}"][data-c="${c}"]`)?.focus();});
-window.__AGDG_TEST__={emptyBoard,mkr,apply,pseudo,legal,inCheck,attacked,drawCause,hash,insufficient,battleBoard,getGame:()=>game,getCurrent:()=>current};
-game=load()||fresh();if(['reveal','battle','victory','draw','retry'].includes(game.phase)||(game.phase==='campaign'&&game.flavor==='forfeit'))current=game.battle||null;
-if(game.phase==='deploy')deploy={};if(game.phase==='retry')deploy={};if(game.phase==='choose')selectedStart=[];
+window.__AGDG_TEST__={emptyBoard,mkr,apply,pseudo,legal,inCheck,attacked,drawCause,hash,insufficient,battleBoard,survivalMet,resolveBattle,getGame:()=>game,getCurrent:()=>current};
+game=load()||fresh();if(['reveal','battle','victory','draw','defeat','campaign_over'].includes(game.phase))current=game.battle||null;
+if(game.phase==='deploy')deploy={};if(game.phase==='choose')selectedStart=[];
 if(game.phase==='victory')offers=game.offers||[];
 render();
 })();
