@@ -164,6 +164,9 @@ header p,.eyebrow,.pill,.board-note,.statusline{font-family:ui-monospace,"SFMono
 .modal-card{background:#111b20;border-color:#7a6b59}
 @media(max-width:780px){header h1{font-size:17px;letter-spacing:.015em}}
 @media (orientation:landscape) and (max-height:600px){#boardPanel .board-shell{width:min(calc(100dvh - 110px),100%)} #controlsPanel{height:100%;max-height:100%}}
+/* v0.5a hotfix: long battle guidance must not widen the flex panel. */
+#boardPanel{min-width:0;max-width:100%}
+#boardPanel .board-note{min-width:0;max-width:100%}
 </style>
 </head>
 <body>
@@ -294,7 +297,16 @@ function battleBoard(){const b=emptyBoard();b[kingPos.r][kingPos.c]=mkr('w','K',
 }
 function rosterTypeCounts(ids){const counts={P:0,N:0,B:0,R:0,Q:0};for(const id of ids){const t=initialPool.find(p=>p.id===id)?.type;if(t)counts[t]++;}return counts;}
 function chooseStart(id){if(selectedStart.includes(id))selectedStart=selectedStart.filter(x=>x!==id);else{if(selectedStart.length>=5){ann('Maximum five companions.');return;}const u=initialPool.find(x=>x.id===id);if(rosterTypeCounts(selectedStart)[u.type]>=QUOTAS[u.type]){ann('Piece cap reached.');return;}selectedStart.push(id);}render();}
-function startCampaign(){if(selectedStart.length<1)return;game.roster=selectedStart.map(id=>makeMember(initialPool.find(x=>x.id===id)));game.phase='campaign';event('party_founded',{members:game.roster.map(u=>({id:u.id,role:u.type}))});render();}
+function startCampaign(){
+  if(selectedStart.length<1)return;
+  const party=selectedStart.map(id=>initialPool.find(x=>x.id===id));
+  const names=party.map(u=>u.name+' ('+TYPES[u.type]+')').join(', ');
+  if(!confirm('Start the Chronicle with this party?\n\n'+names+'\n\nYou cannot change your starting companions afterward.'))return;
+  game.roster=party.map(makeMember);
+  game.phase='campaign';
+  event('party_founded',{members:game.roster.map(u=>({id:u.id,role:u.type}))});
+  render();
+}
 function enterDialogue(){game.phase='dialogue';game.flavor='start';save();render();}
 function dialogueChoice(which){game.flavor=which;game.phase='dialogue_reply';event('negotiation_failed',{approach:which});render();}
 function beginDeploy(){game.phase='deploy';game.encounter={...ENCOUNTERS.westRoad,number:game.battles+1};deploy={};kingPos={r:7,c:4};selectedUnit=null;selectedCell=null;current=null;pendingPromotion=null;game.battle=null;game.moveHistory=[];save();render();}
