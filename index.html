@@ -164,9 +164,14 @@ header p,.eyebrow,.pill,.board-note,.statusline{font-family:ui-monospace,"SFMono
 .modal-card{background:#111b20;border-color:#7a6b59}
 @media(max-width:780px){header h1{font-size:17px;letter-spacing:.015em}}
 @media (orientation:landscape) and (max-height:600px){#boardPanel .board-shell{width:min(calc(100dvh - 110px),100%)} #controlsPanel{height:100%;max-height:100%}}
-/* v0.5a hotfix: long battle guidance must not widen the flex panel. */
+/* v0.5a: constrain the board and let its guidance wrap instead of truncating. */
 #boardPanel{min-width:0;max-width:100%}
-#boardPanel .board-note{min-width:0;max-width:100%}
+#boardPanel .board-note{min-width:0;max-width:100%;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word;line-height:1.25}
+/* Confirmations belong to the Black Iron interface, not browser alerts. */
+#confirmModal{z-index:65}
+#confirmBody{white-space:pre-line;overflow-wrap:anywhere;color:#bfc9c4;margin:10px 0 14px;line-height:1.5}
+#confirmModal .btnrow{display:flex;gap:9px}
+#confirmModal .btnrow .btn{flex:1}
 </style>
 </head>
 <body>
@@ -188,6 +193,7 @@ header p,.eyebrow,.pill,.board-note,.statusline{font-family:ui-monospace,"SFMono
 </main>
 <div id="promotion" class="modal" hidden><div class="modal-card"><h2>Choose promotion</h2><p>A survivor reached the far side. Their new role and identity persist after victory.</p><div class="btnrow" id="promotionButtons"></div></div></div>
 <div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle" hidden><div class="modal-card details-card"><div class="details-head"><h2 id="detailsTitle">Campaign details</h2><button class="btn tiny" id="detailsClose" type="button">Close</button></div><div id="detailsBody"></div><div class="btnrow"><button class="btn tiny" id="detailsExport" type="button">Export history</button><button class="btn tiny danger" id="detailsReset" type="button">New campaign</button></div></div></div>
+<div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmBody" hidden><div class="modal-card"><div class="eyebrow">Confirm decision</div><h2 id="confirmTitle"></h2><p id="confirmBody"></p><div class="btnrow"><button class="btn" id="confirmCancel" type="button">Cancel</button><button class="btn primary" id="confirmAccept" type="button">Confirm</button></div></div></div>
 <p class="footertext">Fully offline · Tap or click to select, tap or click to move · Local autosave · Experimental rules and story</p>
 <script>
 'use strict';
@@ -300,12 +306,13 @@ function chooseStart(id){if(selectedStart.includes(id))selectedStart=selectedSta
 function startCampaign(){
   if(selectedStart.length<1)return;
   const party=selectedStart.map(id=>initialPool.find(x=>x.id===id));
-  const names=party.map(u=>u.name+' ('+TYPES[u.type]+')').join(', ');
-  if(!confirm('Start the Chronicle with this party?\n\n'+names+'\n\nYou cannot change your starting companions afterward.'))return;
-  game.roster=party.map(makeMember);
-  game.phase='campaign';
-  event('party_founded',{members:game.roster.map(u=>({id:u.id,role:u.type}))});
-  render();
+  const names=party.map(u=>u.name+' ('+TYPES[u.type]+')').join('\n');
+  showConfirm('Begin the Chronicle?',names+'\n\nYour starting companions cannot be changed afterward.','Begin Chronicle',()=>{
+    game.roster=party.map(makeMember);
+    game.phase='campaign';
+    event('party_founded',{members:game.roster.map(u=>({id:u.id,role:u.type}))});
+    render();
+  });
 }
 function enterDialogue(){game.phase='dialogue';game.flavor='start';save();render();}
 function dialogueChoice(which){game.flavor=which;game.phase='dialogue_reply';event('negotiation_failed',{approach:which});render();}
@@ -344,6 +351,7 @@ function reveal(){
 // Deployment is committed when skirmish begins. No wagers and no retries.
 function startFight(){
   game.phase='battle';game.battle=current;
+  game.battleStartEventId=game.nextEventId; // Mark uncommitted attempt telemetry.
   current.counts=current.counts||{[hash(current)]:1};
   save();render();ann('Your move. Select a survivor, then a highlighted square.');
 }
@@ -395,6 +403,22 @@ function survivalMet(board,encounter){
   throw new Error('Encounter has no authored survival rule.');
 }
 function resolveBattle(result,reason){
+  if(result==='draw'){
+    // A stalemate/repetition is an unresolved attempt, not a historical battle.
+    // Restore the pre-attempt history as well as the complete companion roster.
+    if(Number.isInteger(game.battleStartEventId)){
+      game.records=game.records.filter(e=>e.id<game.battleStartEventId);
+      game.nextEventId=game.battleStartEventId;
+    }
+    game.battleStartEventId=null;
+    game.drawReason=reason;
+    game.drawRestorable=true;
+    game.phase='draw';
+    game.battle=current; // Retain the final position for review until redeployment.
+    save();render();
+    return;
+  }
+  game.battleStartEventId=null; // Victory/defeat commits the attempt to history.
   const live=game.roster.filter(u=>Object.hasOwn(deploy,u.id)&&current.board.some(row=>row.some(p=>p?.side==='w'&&p.id===u.id)));
   const casualties=game.roster.filter(u=>Object.hasOwn(deploy,u.id)&&!live.some(v=>v.id===u.id));
   const friendlyRemaining=current.board.flat().filter(p=>p?.side==='w'&&p.type!=='K').length;
@@ -438,7 +462,22 @@ function recruit(id){const unit=(game.offers||[]).find(u=>u.id===id);if(!unit)re
   event('survivor_recruited',{id:unit.id,role:unit.type,cost:COST[unit.type],from:'raider aftermath'});render();
 }
 function returnToCamp(){game.phase='campaign';game.flavor=game.lastResult?.result||'';game.offers=[];deploy={};kingPos={r:7,c:4};current=null;game.battle=null;selectedUnit=null;selectedCell=null;save();render();}
-function beginAgain(){if(!confirm('Erase this campaign and start with a new party? This cannot be undone.'))return;localStorage.removeItem(SAVE_KEY);selectedStart=[];deploy={};kingPos={r:7,c:4};current=null;lastMove=null;game=fresh();render();}
+function replayDeadlock(){
+  if(game.phase!=='draw')return;
+  // The existing encounter stays selected. Redeployment is free and casualties
+  // from a deadlocked attempt never reached the persistent roster.
+  game.phase='deploy';game.drawReason=null;game.drawRestorable=false;
+  deploy={};kingPos={r:7,c:4};current=null;lastMove=null;
+  selectedUnit=null;selectedCell=null;legalForCell=[];pendingPromotion=null;
+  game.battle=null;game.moveHistory=[];save();render();
+}
+function beginAgain(){showConfirm('Begin a new campaign?',
+  'Erase this campaign and its recorded history? This cannot be undone.',
+  'Erase & begin again',()=>{
+    localStorage.removeItem(SAVE_KEY);selectedStart=[];deploy={};kingPos={r:7,c:4};
+    current=null;lastMove=null;game=fresh();render();
+    if(!doc('detailsModal').hidden)closeDetails();
+  });}
 function downloadEvents(){const lines=game.records.map(r=>JSON.stringify(r)).join('\n')+'\n';const blob=new Blob([lines],{type:'application/x-ndjson;charset=utf-8'}),url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='chatrajnorak-events-v05a.jsonl';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function playerText(p){if(!p)return '';return `<b>${p.name}</b><small>${TYPES[p.type]} · ${p.age} · met at ${p.origin}</small>`;}
 function renderStory(){let h='';
@@ -452,7 +491,7 @@ function renderStory(){let h='';
  case 'battle':h=`<div class="eyebrow">Battle ${game.battles+1} · no retries</div><h2>${current?.turn==='w'?'Our move.':'The raiders respond.'}</h2><p>Checkmate decides the battle. Companion casualties will persist regardless of the result.</p><div class="hint">${(current?.ply||0)>=1?game.encounter?.firstMoveGuidance:game.encounter?.deployGuidance}</div>`;break;
  case 'defeat':h=`<div class="eyebrow">Recorded defeat · Our Leader survived</div><h2>The road is not ours.</h2><p>The chronicle records the defeat and ${game.lastResult?.casualties.length||0} lost companions. Mortal security is gone.</p><div class="narrative">${game.lastResult?.secureBefore?'Our Leader escapes this defeat, but cannot rely on such protection again.':'A surviving companion finds a way through the raiders and leads Our Leader out.'}</div>`;break;
  case 'campaign_over':h=`<div class="eyebrow">The Chronicle concludes</div><h2>Our Leader has fallen.</h2><p>The final formation left no viable escape. The campaign ends in battle ${game.battles}.</p><div class="narrative">What was built is now part of the world's history.</div>`;break;
- case 'draw':h=`<div class="eyebrow">Decisive deadlock · ${game.lastResult?.reason}</div><h2>No side prevailed.</h2><p>The draw becomes history. Captured companions remain lost; Our Leader's security is unchanged. Draw aftermath is provisional pending future design.</p>`;break;
+ case 'draw':h=`<div class="eyebrow">Unresolved encounter · ${game.drawReason||'draw'}</div><h2>The battle reached a deadlock.</h2><p>No decisive outcome enters the Chronicle. Our Leader's security and the available roster remain unchanged. Reconsider your formation and replay this encounter.</p>${game.drawRestorable?'':'<p class="hint">This draw was saved before the restoration fix. Earlier lost companions cannot be automatically recovered from that save.</p>'}`;break;
  case 'victory':h=`<div class="eyebrow">Recorded victory · our people endured</div><h2>The Western Approach holds.</h2><p>Our Leader earned mortal security. ${game.lastResult?.casualties.length||0} companions lost. +3 scrap.</p><div class="hint">Temporary v0.4 recruitment remains active until the separate v0.5b reputation-driven recruitment update.</div>`;break;
  }
  doc('story').innerHTML=h;
@@ -492,9 +531,9 @@ function controlsHTML(){switch(game.phase){
   case 'campaign_over':return cmdTitle('Our Leader has fallen')+
     `<p class="cmd-narrative">Campaign ended. Review the final board or the Chronicle in Details.</p>`+
     actionButtons('<button class="btn primary" id="newCampaign">New campaign →</button>');
-  case 'draw':return cmdTitle(`Deadlock · ${game.lastResult?.reason}`)+
-    `<p class="cmd-narrative">Draw recorded. Lost companions stay lost; security remains unchanged.</p>`+
-    actionButtons('<button class="btn primary" id="returnCamp">Return to settlement →</button>');
+  case 'draw':return cmdTitle(`Deadlock · ${game.drawReason||'draw'}`)+
+    `<p class="cmd-narrative">No decisive battle recorded. ${game.drawRestorable?'Your full pre-battle party is available.':'Older saved casualties may remain lost.'} Redeploy for the same encounter.</p>`+
+    actionButtons('<button class="btn primary" id="replayDeadlock">Rearrange & replay →</button>');
   case 'victory':return cmdTitle(`Victory · ${game.scrap} scrap`,'Temporary recruitment: v0.5b will replace purchases.')+
     `<div class="offer-container">${(game.offers||[]).map(u=>`<div class="offerline"><div><b>${SYMBOL.w[u.type]} ${u.name} · ${TYPES[u.type]}</b><small>${u.age} · ${u.origin}</small></div><button class="btn tiny" data-recruit="${u.id}" ${game.scrap>=COST[u.type]?'':'disabled'}>Recruit · ${COST[u.type]}</button></div>`).join('')||'<p>Recruitment complete.</p>'}</div>`+
     actionButtons('<button class="btn primary" id="returnCamp">Return to settlement →</button>');
@@ -507,7 +546,7 @@ function renderControls(){doc('controls').innerHTML=controlsHTML();const on=(id,
   doc('controls').querySelectorAll('[data-talk]').forEach(el=>el.onclick=()=>dialogueChoice(el.dataset.talk));
   doc('controls').querySelectorAll('[data-deploy]').forEach(el=>el.onclick=()=>{selectedUnit=el.dataset.deploy;render();});
   doc('controls').querySelectorAll('[data-recruit]').forEach(el=>el.onclick=()=>recruit(el.dataset.recruit));
-  on('begin',startCampaign);on('goRaid',enterDialogue);on('toDeploy',beginDeploy);on('autoDeploy',autoDeploy);on('toReveal',reveal);on('toBattle',startFight);on('returnCamp',returnToCamp);on('newCampaign',beginAgain);
+  on('begin',startCampaign);on('goRaid',enterDialogue);on('toDeploy',beginDeploy);on('autoDeploy',autoDeploy);on('toReveal',reveal);on('toBattle',startFight);on('returnCamp',returnToCamp);on('replayDeadlock',replayDeadlock);on('newCampaign',beginAgain);
 }
 function renderBoard(){const defeated=game.phase==='defeat'||game.phase==='campaign_over';
  const b=game.phase==='battle'||game.phase==='reveal'||game.phase==='victory'||game.phase==='draw'||defeated?current?.board:game.phase==='deploy'?deployBoard():null;
@@ -526,9 +565,9 @@ function renderBoard(){const defeated=game.phase==='defeat'||game.phase==='campa
  doc('boardHelp').textContent=note;
 }
 function deployBoard(){const b=emptyBoard();b[kingPos.r][kingPos.c]=mkr('w','K','king');for(const [id,pos] of Object.entries(deploy)){const u=game.roster.find(u=>u.id===id);if(u)b[pos.r][pos.c]=mkr('w',u.type,id);}return b;}
-function renderStats(){doc('stats').innerHTML=`<div class="statrow"><span class="pill gold">${game.scrap} scrap</span><span class="pill">${game.roster.length} companions</span><span class="pill">${game.wins} wins</span><span class="pill">${game.losses} losses</span><span class="pill">${game.mortalSecure?'SECURE':'VULNERABLE'}</span></div><p class="small muted" style="margin-top:10px">No wagers or retries. Every battle enters the Chronicle. Our Leader begins vulnerable and earns security through victory.</p>`;}
+function renderStats(){doc('stats').innerHTML=`<div class="statrow"><span class="pill gold">${game.scrap} scrap</span><span class="pill">${game.roster.length} companions</span><span class="pill">${game.wins} wins</span><span class="pill">${game.losses} losses</span><span class="pill">${game.mortalSecure?'SECURE':'VULNERABLE'}</span></div><p class="small muted" style="margin-top:10px">No wagers or defeat retries. Only decisive battles enter the Chronicle; deadlocks can be replayed. Our Leader begins vulnerable and earns security through victory.</p>`;}
 function renderRoster(){doc('roster').innerHTML=game.roster.length?game.roster.map(u=>`<div class="offerline"><div><b>${SYMBOL.w[u.type]} ${u.name} <span class="pill">${u.xp} XP</span></b><small>${TYPES[u.type]} · ${u.age} · ${u.origin}</small>${u.xp>=1?`<small class="success">Story: ${u.history}</small>`:''}${u.xp>=3?`<small class="success">Present: Survived ${u.missions} battles with the settlement.</small>`:''}</div></div>`).join(''):'<p class="small muted">No companions yet.</p>';}
-function renderEvents(){const history=game.records.filter(r=>r.type==='battle_resolved'||r.type==='party_founded');doc('events').innerHTML=history.slice(-12).reverse().map(r=>r.type==='party_founded'?`<p><time>#${r.id}</time>The settlement's first defenders gathered.</p>`:`<p><time>#${r.id}</time><b>${r.encounter}:</b> ${r.result.toUpperCase()} · ${r.casualties.length} companions lost · ${r.leaderSurvived?'Our Leader survived':'Our Leader fell'} · ${r.turns} turns</p>`).join('')||'<p>History begins when you assemble your party.</p>';}
+function renderEvents(){const history=game.records.filter(r=>r.type==='party_founded'||(r.type==='battle_resolved'&&r.result!=='draw'));doc('events').innerHTML=history.slice(-12).reverse().map(r=>r.type==='party_founded'?`<p><time>#${r.id}</time>The settlement's first defenders gathered.</p>`:`<p><time>#${r.id}</time><b>${r.encounter}:</b> ${r.result.toUpperCase()} · ${r.casualties.length} companions lost · ${r.leaderSurvived?'Our Leader survived':'Our Leader fell'} · ${r.turns} turns</p>`).join('')||'<p>History begins when you assemble your party.</p>';}
 function render(){document.body.dataset.phase=game.phase;if(previousPhase!==game.phase){selectionPage=0;previousPhase=game.phase;}renderStory();renderControls();renderBoard();renderStats();renderRoster();renderEvents();save();}
  function showDetails(){
    doc('detailsBody').innerHTML=`<section class="details-section">${doc('story').innerHTML}</section><section class="details-section"><h3>Campaign state</h3>${doc('stats').innerHTML}</section><section class="details-section"><h3>Survivor records</h3>${doc('roster').innerHTML}</section><section class="details-section"><h3>What the world remembers</h3>${doc('events').innerHTML}</section>`;
@@ -539,8 +578,33 @@ function render(){document.body.dataset.phase=game.phase;if(previousPhase!==game
  doc('detailsClose').onclick=closeDetails;
  doc('detailsModal').addEventListener('click',e=>{if(e.target===doc('detailsModal'))closeDetails();});
  doc('detailsExport').onclick=downloadEvents;
- doc('detailsReset').onclick=()=>{beginAgain();if(doc('detailsModal').hidden===false)closeDetails();};
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!doc('detailsModal').hidden)closeDetails();});
+ doc('detailsReset').onclick=beginAgain;
+ let confirmAction=null,confirmReturnFocus=null;
+ function showConfirm(title,message,acceptText,action){
+   confirmReturnFocus=document.activeElement;
+   confirmAction=action;
+   doc('confirmTitle').textContent=title;
+   doc('confirmBody').textContent=message;
+   doc('confirmAccept').textContent=acceptText;
+   doc('confirmModal').hidden=false;
+   doc('confirmCancel').focus();
+ }
+ function closeConfirm(accepted=false){
+   if(doc('confirmModal').hidden)return;
+   const action=confirmAction,focus=confirmReturnFocus;
+   doc('confirmModal').hidden=true;confirmAction=null;confirmReturnFocus=null;
+   if(accepted){if(action)action();}
+   else if(focus?.isConnected)focus.focus();
+ }
+ doc('confirmCancel').onclick=()=>closeConfirm(false);
+ doc('confirmAccept').onclick=()=>closeConfirm(true);
+ doc('confirmModal').addEventListener('click',e=>{if(e.target===doc('confirmModal'))closeConfirm(false);});
+ document.addEventListener('keydown',e=>{
+   if(e.key==='Escape'){
+     if(!doc('confirmModal').hidden){closeConfirm(false);return;}
+     if(!doc('detailsModal').hidden)closeDetails();
+   }
+ });
  doc('exportBtn').onclick=downloadEvents;doc('resetBtn').onclick=beginAgain;
 doc('board').addEventListener('keydown',e=>{if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const node=e.target.closest('.square');if(!node)return;e.preventDefault();let r=Number(node.dataset.r),c=Number(node.dataset.c);if(e.key==='ArrowUp')r=Math.max(0,r-1);if(e.key==='ArrowDown')r=Math.min(7,r+1);if(e.key==='ArrowLeft')c=Math.max(0,c-1);if(e.key==='ArrowRight')c=Math.min(7,c+1);if(e.key==='Home')c=0;if(e.key==='End')c=7;doc('board').querySelector(`[data-r="${r}"][data-c="${c}"]`)?.focus();});
 window.__AGDG_TEST__={emptyBoard,mkr,apply,pseudo,legal,inCheck,attacked,drawCause,hash,insufficient,battleBoard,survivalMet,resolveBattle,getGame:()=>game,getCurrent:()=>current};
